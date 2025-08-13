@@ -26,9 +26,12 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import routes from "routes.js";
 import { FaSignOutAlt } from "react-icons/fa";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
 
 export default function HeaderLinks(props) {
   const { variant, children, fixed, secondary, onOpen, ...rest } = props;
+  const history = useHistory();
 
   // Chakra Color Mode
   let mainTeal = useColorModeValue("teal.300", "teal.300");
@@ -42,6 +45,30 @@ export default function HeaderLinks(props) {
     mainText = "white";
   }
   const settingsRef = React.useRef();
+
+  const handleLogout = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:3005/auth/logout",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("name");
+
+      history.push("/auth/signin");
+    } catch (error) {
+      alert(error.response?.data?.message || "Logout failed");
+    }
+  };
+
   return (
     <Flex
       pe={{ sm: "0px", md: "16px" }}
@@ -93,8 +120,7 @@ export default function HeaderLinks(props) {
       </InputGroup> */}
       <NavLink to="#">
         <Button
-          as={Link}
-          to="/auth/signin"
+          onClick={() => handleLogout()}
           ms="0px"
           px="0px"
           me={{ sm: "2px", md: "16px" }}
@@ -104,12 +130,12 @@ export default function HeaderLinks(props) {
             document.documentElement.dir ? (
               ""
             ) : (
-              <FaSignOutAlt color={navbarIcon} w="22px" h="22px" me="0px" />
+              <FaSignOutAlt w="22px" h="22px" me="0px" />
             )
           }
           leftIcon={
             document.documentElement.dir ? (
-              <FaSignOutAlt color={navbarIcon} w="22px" h="22px" me="0px" />
+              <FaSignOutAlt w="22px" h="22px" me="0px" />
             ) : (
               ""
             )

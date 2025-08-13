@@ -7,6 +7,7 @@ import Profile from "views/Dashboard/Profile";
 import SignIn from "views/Auth/SignIn.js";
 import SignUp from "views/Auth/SignUp.js";
 import Rooms from "views/Dashboard/Rooms";
+import Bookings from "views/Dashboard/Bookings";
 
 import {
   HomeIcon,
@@ -17,8 +18,7 @@ import {
   RocketIcon,
   SupportIcon,
 } from "components/Icons/Icons";
-import { FaBed } from "react-icons/fa";
-import { FaSignOutAlt } from "react-icons/fa";
+import { FaBed, FaSignOutAlt, FaExchangeAlt, FaChair } from "react-icons/fa";
 
 var dashRoutes = [
   {
@@ -30,20 +30,12 @@ var dashRoutes = [
     layout: "/admin",
   },
   {
-    path: "/tables",
-    name: "Tables",
-    rtlName: "لوحة القيادة",
-    icon: <StatsIcon color="inherit" />,
-    component: Tables,
-    layout: "/admin",
-  },
-  {
     path: "/billing",
     name: "Billing",
     rtlName: "لوحة القيادة",
     icon: <CreditIcon color="inherit" />,
     component: Billing,
-    layout: "/admin",
+    layout: "/user",
   },
   {
     path: "/rooms",
@@ -51,6 +43,22 @@ var dashRoutes = [
     rtlName: "لوحة القيادة",
     icon: <FaBed color="inherit" />,
     component: Rooms,
+    layout: "/admin",
+  },
+  {
+    path: "/bookings",
+    name: "Bookings",
+    rtlName: "لوحة القيادة",
+    icon: <FaExchangeAlt color="inherit" />,
+    component: Bookings,
+    layout: "/admin",
+  },
+  {
+    path: "/tables",
+    name: "Inventory",
+    rtlName: "لوحة القيادة",
+    icon: <FaChair color="inherit" />,
+    component: Tables,
     layout: "/admin",
   },
   {

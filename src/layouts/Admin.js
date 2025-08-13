@@ -92,13 +92,22 @@ export default function Dashboard(props) {
       }
     });
   };
+  const getAdminRoutes = (routes) => {
+    var adminRoutes = [];
+    routes.map((prop, key) => {
+      if (prop.layout === "/admin") {
+        adminRoutes.push(prop);
+      }
+    });
+    return adminRoutes;
+  };
   const { isOpen, onOpen, onClose } = useDisclosure();
   document.documentElement.dir = "ltr";
   // Chakra Color Mode
   return (
     <ChakraProvider theme={theme} resetCss={false}>
       <Sidebar
-        routes={routes}
+        routes={getAdminRoutes(routes)}
         logoText={"PURITY UI DASHBOARD"}
         display="none"
         sidebarVariant={sidebarVariant}

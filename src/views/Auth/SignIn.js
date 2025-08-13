@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // Chakra imports
 import {
   Box,
@@ -13,14 +13,41 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
 // Assets
 import signInImage from "assets/img/DSCF0345.JPG";
 
 function SignIn() {
+  const history = useHistory();
+
   // Chakra color mode
   const titleColor = useColorModeValue("teal.300", "teal.200");
   const textColor = useColorModeValue("gray.400", "white");
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleLogin = async () => {
+    try {
+      const res = await axios.post("http://localhost:3005/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      // Store token or user info if needed
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user_id", res.data.user.id);
+      localStorage.setItem("name", res.data.user.name);
+
+      // Redirect to dashboard or home page
+      history.push("/admin/dashboard");
+    } catch (error) {
+      alert(error.response?.data?.message || "Login failed");
+    }
+  };
   return (
     <Flex position="relative" mb="40px">
       <Flex
@@ -68,6 +95,10 @@ function SignIn() {
                 type="text"
                 placeholder="Enter your email"
                 size="lg"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
               />
               <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
                 Password
@@ -79,6 +110,10 @@ function SignIn() {
                 type="password"
                 placeholder="Enter your password"
                 size="lg"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
               />
               {/* <FormControl display="flex" alignItems="center">
                 <Switch id="remember-login" colorScheme="teal" me="10px" />
@@ -92,8 +127,7 @@ function SignIn() {
                 </FormLabel>
               </FormControl> */}
               <Button
-                as={Link}
-                to="/admin/dashboard"
+                onClick={handleLogin}
                 fontSize="10px"
                 type="submit"
                 bg="teal.300"
