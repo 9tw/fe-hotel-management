@@ -11,13 +11,6 @@ import peopleImage from "assets/img/people-image.png";
 import logoChakra from "assets/svg/logo-white.svg";
 // import BarChart from "components/Charts/BarChart";
 // import LineChart from "components/Charts/LineChart";
-// Custom icons
-import {
-  CartIcon,
-  DocumentIcon,
-  GlobeIcon,
-  WalletIcon,
-} from "components/Icons/Icons.js";
 import React from "react";
 import { dashboardTableData, timelineData } from "variables/general";
 import ActiveUsers from "./components/ActiveUsers";
@@ -27,6 +20,7 @@ import OrdersOverview from "./components/OrdersOverview";
 import Projects from "./components/Projects";
 import SalesOverview from "./components/SalesOverview";
 import WorkWithTheRockets from "./components/WorkWithTheRockets";
+import { FaBed, FaTools, FaSuitcaseRolling, FaUserAlt } from "react-icons/fa";
 
 export default function Dashboard() {
   const iconBoxInside = useColorModeValue("white", "white");
@@ -35,28 +29,30 @@ export default function Dashboard() {
     <Flex flexDirection="column" pt={{ base: "120px", md: "75px" }}>
       <SimpleGrid columns={{ sm: 1, md: 2, xl: 4 }} spacing="24px">
         <MiniStatistics
-          title={"Today's Moneys"}
-          amount={"$53,000"}
-          percentage={55}
-          icon={<WalletIcon h={"24px"} w={"24px"} color={iconBoxInside} />}
+          title={"Room Available"}
+          amount={"9"}
+          // percentage={55}
+          icon={<FaBed h={"24px"} w={"24px"} color={iconBoxInside} />}
         />
         <MiniStatistics
-          title={"Today's Users"}
-          amount={"2,300"}
-          percentage={5}
-          icon={<GlobeIcon h={"24px"} w={"24px"} color={iconBoxInside} />}
+          title={"Room Maintenance"}
+          amount={"2"}
+          // percentage={5}
+          icon={<FaTools h={"24px"} w={"24px"} color={iconBoxInside} />}
         />
         <MiniStatistics
-          title={"New Clients"}
-          amount={"+3,020"}
-          percentage={-14}
-          icon={<DocumentIcon h={"24px"} w={"24px"} color={iconBoxInside} />}
+          title={"Guests"}
+          amount={"27"}
+          // percentage={-14}
+          icon={
+            <FaSuitcaseRolling h={"24px"} w={"24px"} color={iconBoxInside} />
+          }
         />
         <MiniStatistics
-          title={"Total Sales"}
-          amount={"$173,000"}
-          percentage={8}
-          icon={<CartIcon h={"24px"} w={"24px"} color={iconBoxInside} />}
+          title={"Admin"}
+          amount={"3"}
+          // percentage={8}
+          icon={<FaUserAlt h={"24px"} w={"24px"} color={iconBoxInside} />}
         />
       </SimpleGrid>
       <Grid

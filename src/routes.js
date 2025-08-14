@@ -18,14 +18,20 @@ import {
   RocketIcon,
   SupportIcon,
 } from "components/Icons/Icons";
-import { FaBed, FaSignOutAlt, FaExchangeAlt, FaChair } from "react-icons/fa";
+import {
+  FaHome,
+  FaBed,
+  FaUserAlt,
+  FaExchangeAlt,
+  FaChair,
+} from "react-icons/fa";
 
 var dashRoutes = [
   {
     path: "/dashboard",
     name: "Dashboard",
     rtlName: "لوحة القيادة",
-    icon: <HomeIcon color="inherit" />,
+    icon: <FaHome color="inherit" />,
     component: Dashboard,
     layout: "/admin",
   },
@@ -65,7 +71,7 @@ var dashRoutes = [
     path: "/profile",
     name: "Profile",
     rtlName: "لوحة القيادة",
-    icon: <PersonIcon color="inherit" />,
+    icon: <FaUserAlt color="inherit" />,
     secondaryNavbar: true,
     component: Profile,
     layout: "/admin",
