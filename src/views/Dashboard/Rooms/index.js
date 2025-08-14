@@ -28,24 +28,21 @@ import {
   ModalFooter,
   useDisclosure,
   Select,
-  Option,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
-import { tablesTableData, dashboardTableData } from "variables/general";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import { FaEllipsisV, FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 import axios from "axios";
 
-function Tables() {
+function Rooms() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const textColor = useColorModeValue("gray.700", "white");
   const [captions, setCaptions] = useState(["Name", "Status", ""]);
   const [mode, setMode] = useState();
   const [id, setId] = useState();
-  const [roomName, setRoomName] = useState();
   const [rooms, setRooms] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -482,4 +479,4 @@ function Tables() {
   );
 }
 
-export default Tables;
+export default Rooms;
