@@ -46,7 +46,7 @@ function Rooms() {
   const [rooms, setRooms] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
-    status: 0,
+    status: null,
   });
 
   const fetchRooms = async () => {
@@ -121,7 +121,7 @@ function Rooms() {
 
       setFormData({
         name: "",
-        status: 0,
+        status: null,
       });
       onClose();
       fetchRooms();
