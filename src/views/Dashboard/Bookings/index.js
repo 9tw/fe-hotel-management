@@ -77,6 +77,8 @@ function Bookings() {
   const [bookings, setBookings] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [roomName, setRoomName] = useState([]);
+  const [filterFrom, setFilterFrom] = useState(null);
+  const [filterTo, setFilterTo] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     guest: null,
@@ -88,7 +90,18 @@ function Bookings() {
 
   const fetchBookings = async () => {
     try {
-      const response = await axios.get("http://localhost:3005/booking/today", {
+      var url;
+      if (filterFrom && filterTo) {
+        url =
+          "http://localhost:3005/booking/today?from=" +
+          filterFrom +
+          "&to=" +
+          filterTo;
+      } else {
+        url = "http://localhost:3005/booking/today";
+      }
+
+      const response = await axios.get(url, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -106,6 +119,33 @@ function Bookings() {
       }
     }
   };
+
+  // const fetchFilterBookings = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "http://localhost:3005/booking/today?from=" +
+  //         filterFrom +
+  //         "&to=" +
+  //         filterTo,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //         },
+  //       }
+  //     );
+
+  //     const data = await response.data.result;
+  //     setBookings(data);
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error) && error.response?.status === 404) {
+  //       setBookings([]);
+  //       console.log("No Bookings Found");
+  //     } else {
+  //       console.log("Error:", error);
+  //     }
+  //   }
+  // };
 
   const fetchBookingById = async () => {
     try {
@@ -269,10 +309,13 @@ function Bookings() {
   };
 
   useEffect(() => {
-    fetchBookings();
     fetchRooms();
     fetchRoomName();
   }, []);
+
+  useEffect(() => {
+    fetchBookings();
+  }, [filterFrom, filterTo]);
 
   return (
     <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
@@ -285,6 +328,36 @@ function Bookings() {
         >
           <Text color="white">Add</Text>
         </Button>
+
+        <Card w="auto" h="auto" p="2">
+          <CardBody p="0">
+            <Flex gap="0" align="center" justify="center">
+              <Text mx="2" fontSize="sm" fontWeight="normal">
+                From
+              </Text>
+              <Input
+                borderRadius="15px"
+                fontSize="sm"
+                type="date"
+                size="lg"
+                value={moment(filterFrom).format("YYYY-MM-DD")}
+                onChange={(e) => setFilterFrom(e.target.value)}
+              />
+              <Text ml="4" mr="2" fontSize="sm" fontWeight="normal">
+                To
+              </Text>
+              <Input
+                borderRadius="15px"
+                fontSize="sm"
+                type="date"
+                size="lg"
+                value={moment(filterTo).format("YYYY-MM-DD")}
+                onChange={(e) => setFilterTo(e.target.value)}
+              />
+            </Flex>
+          </CardBody>
+        </Card>
+
         <Card w="auto" h="auto" p="2">
           <CardBody p="0">
             <Flex gap="0" align="center" justify="center">
@@ -459,39 +532,13 @@ function Bookings() {
                           </Text>
                         </Flex>
                       </Td> */}
+                      <Td>{row.room.name}</Td>
+                      <Td>{row.name}</Td>
+                      <Td>{row.guest}</Td>
+                      <Td>{moment(row.from).format("MMM, DD YYYY")}</Td>
+                      <Td>{moment(row.to).format("MMM, DD YYYY")}</Td>
                       <Td>
-                        <Text fontSize="md" color={textColor} pb=".5rem">
-                          {row.room_id}
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text fontSize="md" color={textColor} pb=".5rem">
-                          {row.name}
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text fontSize="md" color={textColor} pb=".5rem">
-                          {row.guest}
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text fontSize="md" color={textColor} pb=".5rem">
-                          {moment(row.from).format("MMM, DD YYYY")}
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text fontSize="md" color={textColor} pb=".5rem">
-                          {moment(row.to).format("MMM, DD YYYY")}
-                        </Text>
-                      </Td>
-                      <Td>
-                        <Text
-                          fontSize="md"
-                          color={textColor}
-                          pb=".5rem"
-                          whiteSpace="normal"
-                          wordBreak="break-word"
-                        >
+                        <Text whiteSpace="normal" wordBreak="break-word">
                           {row.notes}
                         </Text>
                       </Td>
@@ -713,7 +760,7 @@ function Bookings() {
                   type="date"
                   placeholder="Enter guest arrival"
                   size="lg"
-                  value={moment(formData.form).format("YYYY-MM-DD")}
+                  value={moment(formData.from).format("YYYY-MM-DD")}
                   onChange={(e) =>
                     setFormData({ ...formData, from: e.target.value })
                   }
