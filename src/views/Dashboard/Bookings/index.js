@@ -50,6 +50,7 @@ import {
   FaListAlt,
 } from "react-icons/fa";
 import moment from "moment";
+import { ViewOffIcon } from "@chakra-ui/icons";
 
 function Bookings() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -75,6 +76,7 @@ function Bookings() {
   ]);
   const [id, setId] = useState();
   const [bookings, setBookings] = useState([]);
+  const [tableBookings, setTableBookings] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [roomName, setRoomName] = useState([]);
   const [filterFrom, setFilterFrom] = useState(null);
@@ -93,12 +95,14 @@ function Bookings() {
       var url;
       if (filterFrom && filterTo) {
         url =
-          "http://localhost:3005/booking/today?from=" +
+          "http://localhost:3005/booking/today?view=" +
+          view +
+          "&from=" +
           filterFrom +
           "&to=" +
           filterTo;
       } else {
-        url = "http://localhost:3005/booking/today";
+        url = "http://localhost:3005/booking/today?view=" + view;
       }
 
       const response = await axios.get(url, {
@@ -109,7 +113,7 @@ function Bookings() {
       });
 
       const data = await response.data.result;
-      setBookings(data);
+      view === "list" ? setBookings(data) : setTableBookings(data);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         setBookings([]);
@@ -168,6 +172,7 @@ function Bookings() {
         room_id: data[0].room_id,
         notes: data[0].notes,
       });
+      console.log(formData);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         setFormData({
@@ -315,7 +320,7 @@ function Bookings() {
 
   useEffect(() => {
     fetchBookings();
-  }, [filterFrom, filterTo]);
+  }, [view, filterFrom, filterTo]);
 
   return (
     <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
@@ -429,41 +434,31 @@ function Bookings() {
               </Thead>
               <Tbody>
                 <Tr>
-                  <Td>Thursday, 14 Aug 2025</Td>
-                  <Td onClick={() => handleModal(1, "detail")}>
-                    <Tooltip label="Mr Jose" hasArrow placement="top">
-                      ❌
-                    </Tooltip>
-                  </Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
-                  <Td>🟢</Td>
+                  <Td>{moment(new Date()).format("ddd, DD MMM YYYY")}</Td>
+                  {tableBookings &&
+                    tableBookings.map((item) => {
+                      return (
+                        <>
+                          {item.bookings.length != 0 ? (
+                            <Td
+                              onClick={() =>
+                                handleModal(item.bookings[0].id, "detail")
+                              }
+                            >
+                              <Tooltip
+                                label={item.bookings[0].name}
+                                hasArrow
+                                placement="top"
+                              >
+                                ❌
+                              </Tooltip>
+                            </Td>
+                          ) : (
+                            <Td>🟢</Td>
+                          )}
+                        </>
+                      );
+                    })}
                 </Tr>
                 {/* {rooms.map((row) => {
                 return (
@@ -631,7 +626,14 @@ function Bookings() {
           <ModalCloseButton />
           {mode === "detail" ? (
             <ModalBody>
-              <Text textAlign="center">Check Data</Text>
+              <Text>Room: {formData.room_id}</Text>
+              <Text>Guest Name: {formData.name}</Text>
+              <Text>Guest(s): {formData.guest}</Text>
+              <Text>
+                From: {moment(formData.from).format("dddd, DD MMM YYYY")}
+              </Text>
+              <Text>To: {moment(formData.to).format("dddd, DD MMM YYYY")}</Text>
+              <Text>Notes: {formData.notes}</Text>
               <Button
                 onClick={() => setMode("update")}
                 fontSize="10px"
