@@ -12,18 +12,18 @@ const OrdersOverview = ({ title, amount, data }) => {
 
   return (
     <Card maxH="100%">
-      <CardHeader p="22px 0px 35px 14px">
-        <Flex direction="column">
-          <Text fontSize="lg" color={textColor} fontWeight="bold" pb=".5rem">
-            {title}
-          </Text>
-          <Text fontSize="sm" color="gray.400" fontWeight="normal">
+      <CardHeader p="0px 0px 10px 0px">
+        {/* <Flex direction="column"> */}
+        <Text fontSize="lg" color={textColor} fontWeight="bold" pb=".5rem">
+          {title}
+        </Text>
+        {/* <Text fontSize="sm" color="gray.400" fontWeight="normal">
             <Text fontWeight="bold" as="span" color="teal.300">
               {`${amount}%`}
             </Text>{" "}
             this month.
-          </Text>
-        </Flex>
+          </Text> */}
+        {/* </Flex> */}
       </CardHeader>
       <CardBody ps="20px" pe="0px" mb="31px" position="relative">
         <Flex direction="column">

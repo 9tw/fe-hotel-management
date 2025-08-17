@@ -71,6 +71,7 @@ function Bookings() {
     "Guest(s)",
     "From",
     "To",
+    "Night(s)",
     "Notes",
     "",
   ]);
@@ -532,6 +533,7 @@ function Bookings() {
                       <Td>{row.guest}</Td>
                       <Td>{moment(row.from).format("MMM, DD YYYY")}</Td>
                       <Td>{moment(row.to).format("MMM, DD YYYY")}</Td>
+                      <Td>{row.night}</Td>
                       <Td>
                         <Text whiteSpace="normal" wordBreak="break-word">
                           {row.notes}
