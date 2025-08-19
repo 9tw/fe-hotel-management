@@ -91,6 +91,9 @@ function Bookings() {
     room_id: null,
     notes: "",
   });
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchBookings = async () => {
     try {
@@ -99,6 +102,10 @@ function Bookings() {
         url =
           "http://localhost:3005/booking/today?view=" +
           view +
+          "&page=" +
+          page +
+          "&limit=" +
+          limit +
           "&search=" +
           search +
           "&from=" +
@@ -106,7 +113,13 @@ function Bookings() {
           "&to=" +
           filterTo;
       } else {
-        url = "http://localhost:3005/booking/today?view=" + view;
+        url =
+          "http://localhost:3005/booking/today?view=" +
+          view +
+          "&page=" +
+          page +
+          "&limit=" +
+          limit;
       }
 
       const response = await axios.get(url, {
@@ -117,7 +130,16 @@ function Bookings() {
       });
 
       const data = await response.data.result;
-      view === "list" ? setBookings(data) : setTableBookings(data);
+
+      if (view === "list") {
+        setBookings(data);
+
+        const pagination = await response.data.pagination.totalPages;
+        setTotalPages(pagination);
+      } else {
+        console.log(data);
+        setTableBookings(data);
+      }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         setBookings([]);
@@ -176,7 +198,6 @@ function Bookings() {
         room_id: data[0].room_id,
         notes: data[0].notes,
       });
-      console.log(formData);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         setFormData({
@@ -316,7 +337,7 @@ function Bookings() {
         notes: "",
       });
       onClose();
-      fetchBookings();
+      fetchBookings(page);
     } catch (error) {
       console.error("Error submitting form:", error);
       alert(error.response?.data?.message || "Something went wrong");
@@ -329,8 +350,8 @@ function Bookings() {
   }, []);
 
   useEffect(() => {
-    fetchBookings();
-  }, [view, search, filterFrom, filterTo]);
+    fetchBookings(page);
+  }, [view, page, search, filterFrom, filterTo]);
 
   return (
     <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
@@ -704,6 +725,25 @@ function Bookings() {
               </Tbody>
             </Table>
           </CardBody>
+
+          {/* Pagination Controls */}
+          <Flex justify="center" align="center" mt={4} gap={2}>
+            <Button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              isDisabled={page === 1}
+            >
+              Prev
+            </Button>
+            <Text>
+              Page {page} of {totalPages}
+            </Text>
+            <Button
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+              isDisabled={page === totalPages}
+            >
+              Next
+            </Button>
+          </Flex>
         </Card>
       )}
       <Modal isOpen={isOpen} onClose={onClose} isCentered>

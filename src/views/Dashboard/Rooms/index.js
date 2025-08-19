@@ -49,13 +49,13 @@ function Rooms() {
     status: null,
   });
   const [page, setPage] = useState(1);
-  const [limit] = useState(10); // items per page
+  const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
   const fetchRooms = async (page) => {
     try {
       const response = await axios.get(
-        `http://localhost:3005/room?page=${page}&limit=${limit}`,
+        `http://localhost:3005/room/all?page=${page}&limit=${limit}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -133,7 +133,7 @@ function Rooms() {
         status: null,
       });
       onClose();
-      fetchRooms();
+      fetchRooms(page);
     } catch (error) {
       console.error("Error submitting form:", error);
       alert(error.response?.data?.message || "Something went wrong");
