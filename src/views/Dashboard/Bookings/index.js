@@ -80,6 +80,7 @@ function Bookings() {
   const [tableBookings, setTableBookings] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [roomName, setRoomName] = useState([]);
+  const [search, setSearch] = useState("");
   const [filterFrom, setFilterFrom] = useState(null);
   const [filterTo, setFilterTo] = useState(null);
   const [formData, setFormData] = useState({
@@ -94,10 +95,12 @@ function Bookings() {
   const fetchBookings = async () => {
     try {
       var url;
-      if (filterFrom && filterTo) {
+      if (search !== "" || (filterFrom && filterTo)) {
         url =
           "http://localhost:3005/booking/today?view=" +
           view +
+          "&search=" +
+          search +
           "&from=" +
           filterFrom +
           "&to=" +
@@ -242,6 +245,12 @@ function Bookings() {
     onOpen();
   };
 
+  const handleReset = () => {
+    setSearch("");
+    setFilterFrom(null);
+    setFilterTo(null);
+  };
+
   const handleSubmit = async (mode) => {
     try {
       if (mode === "create") {
@@ -321,7 +330,7 @@ function Bookings() {
 
   useEffect(() => {
     fetchBookings();
-  }, [view, filterFrom, filterTo]);
+  }, [view, search, filterFrom, filterTo]);
 
   return (
     <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
@@ -338,7 +347,23 @@ function Bookings() {
         <Card w="auto" h="auto" p="2">
           <CardBody p="0">
             <Flex gap="0" align="center" justify="center">
-              <Text mx="2" fontSize="sm" fontWeight="normal">
+              {view === "table" ? null : (
+                <>
+                  <Text mx="2" fontSize="sm" fontWeight="normal">
+                    Search
+                  </Text>
+                  <Input
+                    borderRadius="15px"
+                    fontSize="sm"
+                    type="text"
+                    placeholder="Search guest name"
+                    size="lg"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </>
+              )}
+              <Text ml="4" mr="2" fontSize="sm" fontWeight="normal">
                 From
               </Text>
               <Input
@@ -360,6 +385,16 @@ function Bookings() {
                 value={moment(filterTo).format("YYYY-MM-DD")}
                 onChange={(e) => setFilterTo(e.target.value)}
               />
+              <Button
+                ml="4"
+                mr="2"
+                p="0px"
+                bg="teal.300"
+                w="50%"
+                onClick={() => handleReset()}
+              >
+                <Text color="white">Reset</Text>
+              </Button>
             </Flex>
           </CardBody>
         </Card>
