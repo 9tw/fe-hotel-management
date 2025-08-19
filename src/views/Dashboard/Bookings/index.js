@@ -434,20 +434,35 @@ function Bookings() {
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td>{moment(new Date()).format("ddd, DD MMM YYYY")}</Td>
-                  {tableBookings &&
-                    tableBookings.map((item) => {
-                      return (
-                        <>
-                          {item.bookings.length != 0 ? (
+                {filterFrom && filterTo ? (
+                  tableBookings &&
+                  tableBookings.map((item) => {
+                    return (
+                      <Tr>
+                        <Td>{moment(item.date).format("ddd, DD MMM YYYY")}</Td>
+                        {item.rooms?.map((room) => {
+                          return room.bookings.length != 0 ? (
                             <Td
                               onClick={() =>
-                                handleModal(item.bookings[0].id, "detail")
+                                handleModal(room.bookings[0].id, "detail")
                               }
                             >
                               <Tooltip
-                                label={item.bookings[0].name}
+                                label={room.bookings[0].name}
+                                hasArrow
+                                placement="top"
+                              >
+                                ❌
+                              </Tooltip>
+                            </Td>
+                          ) : room.status != 1 ? (
+                            <Td>
+                              <Tooltip
+                                label={
+                                  room.status === 2
+                                    ? "Unavailable"
+                                    : "Maintenance"
+                                }
                                 hasArrow
                                 placement="top"
                               >
@@ -456,11 +471,54 @@ function Bookings() {
                             </Td>
                           ) : (
                             <Td>🟢</Td>
-                          )}
-                        </>
-                      );
-                    })}
-                </Tr>
+                          );
+                        })}
+                      </Tr>
+                    );
+                  })
+                ) : (
+                  <Tr>
+                    <Td>{moment(new Date()).format("ddd, DD MMM YYYY")}</Td>
+                    {tableBookings &&
+                      tableBookings.map((item) => {
+                        return (
+                          <>
+                            {item.bookings.length != 0 ? (
+                              <Td
+                                onClick={() =>
+                                  handleModal(item.bookings[0].id, "detail")
+                                }
+                              >
+                                <Tooltip
+                                  label={item.bookings[0].name}
+                                  hasArrow
+                                  placement="top"
+                                >
+                                  ❌
+                                </Tooltip>
+                              </Td>
+                            ) : item.status != 1 ? (
+                              <Td>
+                                <Tooltip
+                                  label={
+                                    item.status === 2
+                                      ? "Unavailable"
+                                      : "Maintenance"
+                                  }
+                                  hasArrow
+                                  placement="top"
+                                >
+                                  ❌
+                                </Tooltip>
+                              </Td>
+                            ) : (
+                              <Td>🟢</Td>
+                            )}
+                          </>
+                        );
+                      })}
+                  </Tr>
+                )}
                 {/* {rooms.map((row) => {
                 return (
                   <Tr>
