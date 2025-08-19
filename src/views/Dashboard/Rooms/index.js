@@ -48,18 +48,27 @@ function Rooms() {
     name: "",
     status: null,
   });
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10); // items per page
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchRooms = async () => {
+  const fetchRooms = async (page) => {
     try {
-      const response = await axios.get("http://localhost:3005/room", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:3005/room?page=${page}&limit=${limit}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       const data = await response.data.result;
+      const pagination = await response.data.pagination.totalPages;
+
       setRooms(data);
+      setTotalPages(pagination);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         setRooms([]);
@@ -144,8 +153,8 @@ function Rooms() {
   };
 
   useEffect(() => {
-    fetchRooms();
-  }, []);
+    fetchRooms(page);
+  }, [page]);
 
   return (
     <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
@@ -316,6 +325,25 @@ function Rooms() {
             </Tbody>
           </Table>
         </CardBody>
+
+        {/* Pagination Controls */}
+        <Flex justify="center" align="center" mt={4} gap={2}>
+          <Button
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            isDisabled={page === 1}
+          >
+            Prev
+          </Button>
+          <Text>
+            Page {page} of {totalPages}
+          </Text>
+          <Button
+            onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+            isDisabled={page === totalPages}
+          >
+            Next
+          </Button>
+        </Flex>
       </Card>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
