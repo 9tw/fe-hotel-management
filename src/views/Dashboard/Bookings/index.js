@@ -41,7 +41,6 @@ import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import IconBox from "components/Icons/IconBox";
-import { useLocation } from "react-router-dom";
 import {
   FaEllipsisV,
   FaRegEdit,
@@ -50,13 +49,9 @@ import {
   FaListAlt,
 } from "react-icons/fa";
 import moment from "moment";
-import { ViewOffIcon } from "@chakra-ui/icons";
 
 function Bookings() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  // const { search } = useLocation();
-  // const params = new URLSearchParams(search);
-  // const view = params.get("view");
 
   const textColor = useColorModeValue("gray.700", "white");
   const iconTeal = useColorModeValue("teal.300", "teal.300");
@@ -65,7 +60,7 @@ function Bookings() {
 
   const [view, setView] = useState("list");
   const [mode, setMode] = useState();
-  const [captions, setCaptions] = useState([
+  const [captions] = useState([
     "Room",
     "Name",
     "Guest(s)",
@@ -75,7 +70,6 @@ function Bookings() {
     "Notes",
     "",
   ]);
-  const [id, setId] = useState();
   const [bookings, setBookings] = useState([]);
   const [tableBookings, setTableBookings] = useState([]);
   const [rooms, setRooms] = useState([]);
@@ -84,12 +78,13 @@ function Bookings() {
   const [filterFrom, setFilterFrom] = useState(null);
   const [filterTo, setFilterTo] = useState(null);
   const [formData, setFormData] = useState({
-    name: "",
+    id: null,
+    name: null,
     guest: null,
     from: null,
     to: null,
     room_id: null,
-    notes: "",
+    notes: null,
   });
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
@@ -137,7 +132,6 @@ function Bookings() {
         const pagination = await response.data.pagination.totalPages;
         setTotalPages(pagination);
       } else {
-        console.log(data);
         setTableBookings(data);
       }
     } catch (error) {
@@ -177,10 +171,10 @@ function Bookings() {
   //   }
   // };
 
-  const fetchBookingById = async () => {
+  const fetchBookingById = async (bookingId) => {
     try {
       const response = await axios.get(
-        "http://localhost:3005/booking/get/" + id,
+        "http://localhost:3005/booking/get/" + bookingId,
         {
           headers: {
             "Content-Type": "application/json",
@@ -189,24 +183,26 @@ function Bookings() {
         }
       );
 
-      const data = await response.data.result;
+      const data = await response.data.result[0];
       setFormData({
-        name: data[0].name,
-        guest: data[0].guest,
-        from: data[0].from,
-        to: data[0].to,
-        room_id: data[0].room_id,
-        notes: data[0].notes,
+        id: data.id,
+        name: data.name,
+        guest: data.guest,
+        from: data.from,
+        to: data.to,
+        room_id: data.room_id,
+        notes: data.notes,
       });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         setFormData({
-          name: "",
+          id: null,
+          name: null,
           guest: null,
           from: null,
           to: null,
           room_id: null,
-          notes: "",
+          notes: null,
         });
         console.log("No Booking Found");
       } else {
@@ -259,8 +255,7 @@ function Bookings() {
 
   const handleModal = (id, mode) => {
     if (mode !== "create") {
-      setId(id);
-      fetchBookingById();
+      fetchBookingById(id);
     }
     setMode(mode);
     onOpen();
@@ -270,9 +265,24 @@ function Bookings() {
     setSearch("");
     setFilterFrom(null);
     setFilterTo(null);
+    setBookings([]);
+    setTableBookings([]);
   };
 
-  const handleSubmit = async (mode) => {
+  const handleClose = () => {
+    setFormData({
+      id: null,
+      name: null,
+      guest: null,
+      from: null,
+      to: null,
+      room_id: null,
+      notes: null,
+    });
+    onClose();
+  };
+
+  const handleSubmit = async (mode, bookingId) => {
     try {
       if (mode === "create") {
         const response = await axios.post(
@@ -296,7 +306,7 @@ function Bookings() {
         alert("Booking created!");
       } else if (mode === "update") {
         const response = await axios.put(
-          "http://localhost:3005/booking/" + id,
+          "http://localhost:3005/booking/" + bookingId,
           {
             name: formData.name,
             guest: formData.guest,
@@ -316,7 +326,7 @@ function Bookings() {
         alert("Booking updated!");
       } else {
         const response = await axios.delete(
-          "http://localhost:3005/booking/" + id,
+          "http://localhost:3005/booking/" + bookingId,
           {
             headers: {
               "Content-Type": "application/json",
@@ -329,12 +339,13 @@ function Bookings() {
       }
 
       setFormData({
-        name: "",
+        id: null,
+        name: null,
         guest: null,
         from: null,
         to: null,
         room_id: null,
-        notes: "",
+        notes: null,
       });
       onClose();
       fetchBookings(page);
@@ -413,6 +424,7 @@ function Bookings() {
                 bg="teal.300"
                 w="50%"
                 onClick={() => handleReset()}
+                isDisabled={!filterFrom && !filterTo}
               >
                 <Text color="white">Reset</Text>
               </Button>
@@ -497,25 +509,25 @@ function Bookings() {
                       <Tr>
                         <Td>{moment(item.date).format("ddd, DD MMM YYYY")}</Td>
                         {item.rooms?.map((room) => {
-                          return room.bookings.length != 0 ? (
+                          return room?.bookings?.length != 0 ? (
                             <Td
                               onClick={() =>
-                                handleModal(room.bookings[0].id, "detail")
+                                handleModal(room?.bookings[0]?.id, "detail")
                               }
                             >
                               <Tooltip
-                                label={room.bookings[0].name}
+                                label={room?.bookings[0]?.name}
                                 hasArrow
                                 placement="top"
                               >
                                 ❌
                               </Tooltip>
                             </Td>
-                          ) : room.status != 1 ? (
+                          ) : room?.status != 1 ? (
                             <Td>
                               <Tooltip
                                 label={
-                                  room.status === 2
+                                  room?.status === 2
                                     ? "Unavailable"
                                     : "Maintenance"
                                 }
@@ -539,25 +551,25 @@ function Bookings() {
                       tableBookings.map((item) => {
                         return (
                           <>
-                            {item.bookings.length != 0 ? (
+                            {item?.bookings?.length != 0 ? (
                               <Td
                                 onClick={() =>
-                                  handleModal(item.bookings[0].id, "detail")
+                                  handleModal(item?.bookings[0]?.id, "detail")
                                 }
                               >
                                 <Tooltip
-                                  label={item.bookings[0].name}
+                                  label={item?.bookings[0]?.name}
                                   hasArrow
                                   placement="top"
                                 >
                                   ❌
                                 </Tooltip>
                               </Td>
-                            ) : item.status != 1 ? (
+                            ) : item?.status != 1 ? (
                               <Td>
                                 <Tooltip
                                   label={
-                                    item.status === 2
+                                    item?.status === 2
                                       ? "Unavailable"
                                       : "Maintenance"
                                   }
@@ -746,7 +758,7 @@ function Bookings() {
           </Flex>
         </Card>
       )}
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal isOpen={isOpen} onClose={() => handleClose()} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -815,7 +827,7 @@ function Bookings() {
                 You sure to delete booking by {formData.name} ?
               </Text>
               <Button
-                onClick={onClose}
+                onClick={() => handleClose()}
                 fontSize="10px"
                 // type="submit"
                 variant="outline"
@@ -835,7 +847,7 @@ function Bookings() {
                 Cancel
               </Button>
               <Button
-                onClick={() => handleSubmit(mode)}
+                onClick={() => handleSubmit(mode, formData.id)}
                 fontSize="10px"
                 type="submit"
                 bg="teal.300"
@@ -958,7 +970,7 @@ function Bookings() {
                   }
                 />
                 <Button
-                  onClick={onClose}
+                  onClick={() => handleClose()}
                   fontSize="10px"
                   // type="submit"
                   variant="outline"
@@ -978,7 +990,7 @@ function Bookings() {
                   Cancel
                 </Button>
                 <Button
-                  onClick={() => handleSubmit(mode)}
+                  onClick={() => handleSubmit(mode, formData.id)}
                   fontSize="10px"
                   type="submit"
                   bg="teal.300"
