@@ -67,7 +67,7 @@ export default function Footer(props) {
             Powered by{" "}
             <Link
               // color={linkTeal}
-              color="teal.400"
+              color="orange"
               href="https://www.instagram.com/casually_digital_life/"
               target="_blank"
             >
