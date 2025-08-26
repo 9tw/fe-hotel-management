@@ -32,10 +32,13 @@ function SignIn() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("http://localhost:3005/auth/login", {
-        email: formData.email,
-        password: formData.password,
-      });
+      const res = await axios.post(
+        process.env.REACT_APP_API_URL + "/auth/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
 
       // Store token or user info if needed
       localStorage.setItem("token", res.data.token);

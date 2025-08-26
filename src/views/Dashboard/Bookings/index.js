@@ -95,7 +95,8 @@ function Bookings() {
       var url;
       if (search !== "" || (filterFrom && filterTo)) {
         url =
-          "http://localhost:3005/booking/today?view=" +
+          process.env.REACT_APP_API_URL +
+          "/booking/today?view=" +
           view +
           "&page=" +
           page +
@@ -109,7 +110,8 @@ function Bookings() {
           filterTo;
       } else {
         url =
-          "http://localhost:3005/booking/today?view=" +
+          process.env.REACT_APP_API_URL +
+          "/booking/today?view=" +
           view +
           "&page=" +
           page +
@@ -144,37 +146,10 @@ function Bookings() {
     }
   };
 
-  // const fetchFilterBookings = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "http://localhost:3005/booking/today?from=" +
-  //         filterFrom +
-  //         "&to=" +
-  //         filterTo,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //         },
-  //       }
-  //     );
-
-  //     const data = await response.data.result;
-  //     setBookings(data);
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error) && error.response?.status === 404) {
-  //       setBookings([]);
-  //       console.log("No Bookings Found");
-  //     } else {
-  //       console.log("Error:", error);
-  //     }
-  //   }
-  // };
-
   const fetchBookingById = async (bookingId) => {
     try {
       const response = await axios.get(
-        "http://localhost:3005/booking/get/" + bookingId,
+        process.env.REACT_APP_API_URL + "/booking/get/" + bookingId,
         {
           headers: {
             "Content-Type": "application/json",
@@ -213,12 +188,15 @@ function Bookings() {
 
   const fetchRooms = async () => {
     try {
-      const response = await axios.get("http://localhost:3005/room", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL + "/room",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       const data = await response.data.result;
       setRooms(data);
@@ -234,12 +212,15 @@ function Bookings() {
 
   const fetchRoomName = async () => {
     try {
-      const response = await axios.get("http://localhost:3005/room/names", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL + "/room/names",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       const data = await response.data.result;
       setRoomName(data.map((r) => r.name));
@@ -286,7 +267,7 @@ function Bookings() {
     try {
       if (mode === "create") {
         const response = await axios.post(
-          "http://localhost:3005/booking",
+          process.env.REACT_APP_API_URL + "/booking",
           {
             name: formData.name,
             guest: formData.guest,
@@ -306,7 +287,7 @@ function Bookings() {
         alert("Booking created!");
       } else if (mode === "update") {
         const response = await axios.put(
-          "http://localhost:3005/booking/" + bookingId,
+          process.env.REACT_APP_API_URL + "/booking/" + bookingId,
           {
             name: formData.name,
             guest: formData.guest,
@@ -326,7 +307,7 @@ function Bookings() {
         alert("Booking updated!");
       } else {
         const response = await axios.delete(
-          "http://localhost:3005/booking/" + bookingId,
+          process.env.REACT_APP_API_URL + "/booking/" + bookingId,
           {
             headers: {
               "Content-Type": "application/json",

@@ -55,7 +55,7 @@ function Rooms() {
   const fetchRooms = async (page) => {
     try {
       const response = await axios.get(
-        `http://localhost:3005/room/all?page=${page}&limit=${limit}`,
+        process.env.REACT_APP_API_URL + `/room/all?page=${page}&limit=${limit}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -84,7 +84,7 @@ function Rooms() {
       console.log(formData);
       if (mode === "create") {
         const response = await axios.post(
-          "http://localhost:3005/room",
+          process.env.REACT_APP_API_URL + "/room",
           {
             name: formData.name,
             status: formData.status,
@@ -100,7 +100,7 @@ function Rooms() {
         alert("Room created!");
       } else if (mode === "update") {
         const response = await axios.put(
-          "http://localhost:3005/room/" + id,
+          process.env.REACT_APP_API_URL + "/room/" + id,
           {
             name: formData.name,
             status: formData.status,
@@ -116,7 +116,7 @@ function Rooms() {
         alert("Room updated!");
       } else {
         const response = await axios.delete(
-          "http://localhost:3005/room/" + id,
+          process.env.REACT_APP_API_URL + "/room/" + id,
           {
             headers: {
               "Content-Type": "application/json",
