@@ -31,8 +31,10 @@ import { FaBed, FaTools, FaTimes, FaUserAlt } from "react-icons/fa";
 import axios from "axios";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
+import moment from "moment";
 
 export default function Dashboard() {
+  const today = new Date();
   const iconBoxInside = useColorModeValue("white", "white");
   const textColor = useColorModeValue("gray.700", "white");
 
@@ -177,10 +179,24 @@ export default function Dashboard() {
       >
         <Card p="16px" overflowX={{ sm: "scroll", xl: "hidden" }}>
           <CardHeader>
-            {/* <Flex direction="column"> */}
-            <Text fontSize="lg" color={textColor} fontWeight="bold" pb=".5rem">
-              Today's Check In
-            </Text>
+            <Flex justify="space-between" w="100%">
+              <Text
+                fontSize="lg"
+                color={textColor}
+                fontWeight="bold"
+                pb=".5rem"
+              >
+                Today's Check In
+              </Text>
+              <Text
+                fontSize="lg"
+                color={textColor}
+                fontWeight="bold"
+                pb=".5rem"
+              >
+                {moment(today).format("ddd, DD MMM YYYY")}
+              </Text>
+            </Flex>
           </CardHeader>
           <Table variant="simple" color={textColor}>
             <Thead>

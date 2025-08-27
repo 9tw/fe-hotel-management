@@ -44,19 +44,19 @@ var dashRoutes = [
     layout: "/user",
   },
   {
-    path: "/rooms",
-    name: "Rooms",
-    rtlName: "لوحة القيادة",
-    icon: <FaBed color="inherit" />,
-    component: Rooms,
-    layout: "/admin",
-  },
-  {
     path: "/bookings",
     name: "Bookings",
     rtlName: "لوحة القيادة",
     icon: <FaExchangeAlt color="inherit" />,
     component: Bookings,
+    layout: "/admin",
+  },
+  {
+    path: "/rooms",
+    name: "Room Condition",
+    rtlName: "لوحة القيادة",
+    icon: <FaBed color="inherit" />,
+    component: Rooms,
     layout: "/admin",
   },
   {

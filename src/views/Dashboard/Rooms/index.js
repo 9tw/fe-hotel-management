@@ -233,9 +233,9 @@ function Rooms() {
                         pb=".5rem"
                       >
                         {row.status === 1
-                          ? `🟢`
+                          ? `✅`
                           : row.status === 2
-                          ? `❌`
+                          ? `🚫`
                           : `🛠️`}
                       </Text>
                     </Td>
