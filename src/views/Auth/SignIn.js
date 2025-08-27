@@ -22,7 +22,7 @@ function SignIn() {
   const history = useHistory();
 
   // Chakra color mode
-  const titleColor = useColorModeValue("teal.300", "teal.200");
+  const titleColor = useColorModeValue("orange", "orange.200");
   const textColor = useColorModeValue("gray.400", "white");
 
   const [formData, setFormData] = useState({
@@ -133,18 +133,18 @@ function SignIn() {
                 onClick={handleLogin}
                 fontSize="10px"
                 type="submit"
-                bg="teal.300"
+                bg="orange"
                 w="100%"
                 h="45"
                 mb="20px"
                 color="white"
                 mt="20px"
                 _hover={{
-                  bg: "teal.200",
+                  bg: "orange.200",
                 }}
-                _active={{
-                  bg: "teal.400",
-                }}
+                // _active={{
+                //   bg: "orange.400",
+                // }}
               >
                 SIGN IN
               </Button>

@@ -168,7 +168,7 @@ function Rooms() {
           <Flex direction="column">
             <Button
               p="0px"
-              bg="teal.300"
+              bg="orange"
               w="200%"
               onClick={() => handleModal(null, null, null, "create")}
             >
@@ -233,9 +233,9 @@ function Rooms() {
                         pb=".5rem"
                       >
                         {row.status === 1
-                          ? `🟢`
+                          ? `✅`
                           : row.status === 2
-                          ? `❌`
+                          ? `🚫`
                           : `🛠️`}
                       </Text>
                     </Td>
@@ -366,18 +366,18 @@ function Rooms() {
                 fontSize="10px"
                 // type="submit"
                 variant="outline"
-                borderColor="teal.300"
-                color="teal.300"
+                borderColor="orange"
+                color="orange"
                 w="50%"
                 h="45"
                 mb="20px"
                 mt="20px"
                 _hover={{
-                  bg: "teal.50", // light background on hover
+                  bg: "orange.100",
                 }}
-                _active={{
-                  bg: "teal.100", // slightly darker when active
-                }}
+                // _active={{
+                //   bg: "teal.100"
+                // }}
               >
                 Cancel
               </Button>
@@ -385,18 +385,18 @@ function Rooms() {
                 onClick={() => handleSubmit(mode)}
                 fontSize="10px"
                 type="submit"
-                bg="teal.300"
+                bg="orange"
                 w="50%"
                 h="45"
                 mb="20px"
                 color="white"
                 mt="20px"
                 _hover={{
-                  bg: "teal.200",
+                  bg: "orange.200",
                 }}
-                _active={{
-                  bg: "teal.400",
-                }}
+                // _active={{
+                //   bg: "teal.400",
+                // }}
               >
                 Delete
               </Button>
@@ -457,18 +457,18 @@ function Rooms() {
                   fontSize="10px"
                   // type="submit"
                   variant="outline"
-                  borderColor="teal.300"
-                  color="teal.300"
+                  borderColor="orange"
+                  color="orange"
                   w="50%"
                   h="45"
                   mb="20px"
                   mt="20px"
                   _hover={{
-                    bg: "teal.50", // light background on hover
+                    bg: "orange.100",
                   }}
-                  _active={{
-                    bg: "teal.100", // slightly darker when active
-                  }}
+                  // _active={{
+                  //   bg: "teal.100",
+                  // }}
                 >
                   Cancel
                 </Button>
@@ -476,18 +476,18 @@ function Rooms() {
                   onClick={() => handleSubmit(mode)}
                   fontSize="10px"
                   type="submit"
-                  bg="teal.300"
+                  bg="orange"
                   w="50%"
                   h="45"
                   mb="20px"
                   color="white"
                   mt="20px"
                   _hover={{
-                    bg: "teal.200",
+                    bg: "orange.200",
                   }}
-                  _active={{
-                    bg: "teal.400",
-                  }}
+                  // _active={{
+                  //   bg: "teal.400",
+                  // }}
                 >
                   Submit
                 </Button>

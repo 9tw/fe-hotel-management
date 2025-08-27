@@ -54,7 +54,7 @@ function Bookings() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const textColor = useColorModeValue("gray.700", "white");
-  const iconTeal = useColorModeValue("teal.300", "teal.300");
+  const iconOrange = useColorModeValue("orange", "orange.200");
   const iconBoxInside = useColorModeValue("white", "white");
   const iconBoxInsideAlt = useColorModeValue("lightgrey", "lightgrey");
 
@@ -350,7 +350,7 @@ function Bookings() {
       <Flex flexDirection="row" align="center" justify="space-between" w="100%">
         <Button
           p="0px"
-          bg="teal.300"
+          bg="orange"
           w="5%"
           onClick={() => handleModal(null, "create")}
         >
@@ -402,7 +402,7 @@ function Bookings() {
                 ml="4"
                 mr="2"
                 p="0px"
-                bg="teal.300"
+                bg="orange"
                 w="50%"
                 onClick={() => handleReset()}
                 isDisabled={!filterFrom && !filterTo}
@@ -420,7 +420,7 @@ function Bookings() {
                 as="box"
                 h="45px"
                 w="45px"
-                bg={view === "table" ? iconBoxInside : iconTeal}
+                bg={view === "table" ? iconBoxInside : iconOrange}
                 onClick={() => setView("list")}
               >
                 <FaListAlt
@@ -432,7 +432,7 @@ function Bookings() {
                 as="box"
                 h="45px"
                 w="45px"
-                bg={view === "table" ? iconTeal : iconBoxInside}
+                bg={view === "table" ? iconOrange : iconBoxInside}
                 onClick={() => setView("table")}
               >
                 <FaTable
@@ -767,18 +767,18 @@ function Bookings() {
                 fontSize="10px"
                 // type="submit"
                 variant="outline"
-                borderColor="teal.300"
-                color="teal.300"
+                borderColor="orange"
+                color="orange"
                 w="50%"
                 h="45"
                 mb="20px"
                 mt="20px"
                 _hover={{
-                  bg: "teal.50", // light background on hover
+                  bg: "orange.100",
                 }}
-                _active={{
-                  bg: "teal.100", // slightly darker when active
-                }}
+                // _active={{
+                //   bg: "teal.100",
+                // }}
               >
                 Update
               </Button>
@@ -786,18 +786,18 @@ function Bookings() {
                 onClick={() => setMode("delete")}
                 fontSize="10px"
                 // type="submit"
-                bg="teal.300"
+                bg="orange"
                 w="50%"
                 h="45"
                 mb="20px"
                 color="white"
                 mt="20px"
                 _hover={{
-                  bg: "teal.200",
+                  bg: "orange.200",
                 }}
-                _active={{
-                  bg: "teal.400",
-                }}
+                // _active={{
+                //   bg: "teal.400",
+                // }}
               >
                 Delete
               </Button>
@@ -812,18 +812,18 @@ function Bookings() {
                 fontSize="10px"
                 // type="submit"
                 variant="outline"
-                borderColor="teal.300"
-                color="teal.300"
+                borderColor="orange"
+                color="orange"
                 w="50%"
                 h="45"
                 mb="20px"
                 mt="20px"
                 _hover={{
-                  bg: "teal.50", // light background on hover
+                  bg: "orange.100",
                 }}
-                _active={{
-                  bg: "teal.100", // slightly darker when active
-                }}
+                // _active={{
+                //   bg: "teal.100",
+                // }}
               >
                 Cancel
               </Button>
@@ -831,18 +831,18 @@ function Bookings() {
                 onClick={() => handleSubmit(mode, formData.id)}
                 fontSize="10px"
                 type="submit"
-                bg="teal.300"
+                bg="orange"
                 w="50%"
                 h="45"
                 mb="20px"
                 color="white"
                 mt="20px"
                 _hover={{
-                  bg: "teal.200",
+                  bg: "orange.200",
                 }}
-                _active={{
-                  bg: "teal.400",
-                }}
+                // _active={{
+                //   bg: "teal.400",
+                // }}
               >
                 Delete
               </Button>
@@ -955,18 +955,18 @@ function Bookings() {
                   fontSize="10px"
                   // type="submit"
                   variant="outline"
-                  borderColor="teal.300"
-                  color="teal.300"
+                  borderColor="orange"
+                  color="orange"
                   w="50%"
                   h="45"
                   mb="20px"
                   mt="20px"
                   _hover={{
-                    bg: "teal.50", // light background on hover
+                    bg: "orange.100",
                   }}
-                  _active={{
-                    bg: "teal.100", // slightly darker when active
-                  }}
+                  // _active={{
+                  //   bg: "teal.100",
+                  // }}
                 >
                   Cancel
                 </Button>
@@ -974,18 +974,18 @@ function Bookings() {
                   onClick={() => handleSubmit(mode, formData.id)}
                   fontSize="10px"
                   type="submit"
-                  bg="teal.300"
+                  bg="orange"
                   w="50%"
                   h="45"
                   mb="20px"
                   color="white"
                   mt="20px"
                   _hover={{
-                    bg: "teal.200",
+                    bg: "orange.200",
                   }}
-                  _active={{
-                    bg: "teal.400",
-                  }}
+                  // _active={{
+                  //   bg: "teal.400",
+                  // }}
                 >
                   Submit
                 </Button>
