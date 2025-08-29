@@ -100,7 +100,8 @@ function Bookings() {
       var url;
       if (search !== "" || (filterFrom && filterTo)) {
         url =
-          "http://localhost:3005/booking/today?view=" +
+          process.env.REACT_APP_API_URL +
+          "/booking/today?view=" +
           view +
           "&page=" +
           page +
@@ -114,7 +115,8 @@ function Bookings() {
           filterTo;
       } else {
         url =
-          "http://localhost:3005/booking/today?view=" +
+          process.env.REACT_APP_API_URL +
+          "/booking/today?view=" +
           view +
           "&page=" +
           page +
@@ -152,7 +154,7 @@ function Bookings() {
   const fetchBookingById = async (bookingId) => {
     try {
       const response = await axios.get(
-        "http://localhost:3005/booking/get/" + bookingId,
+        process.env.REACT_APP_API_URL + "/booking/get/" + bookingId,
         {
           headers: {
             "Content-Type": "application/json",
@@ -191,12 +193,15 @@ function Bookings() {
 
   const fetchRooms = async () => {
     try {
-      const response = await axios.get("http://localhost:3005/room", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL + "/room",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       const data = await response.data.result;
       setRooms(data);
@@ -212,12 +217,15 @@ function Bookings() {
 
   const fetchRoomName = async () => {
     try {
-      const response = await axios.get("http://localhost:3005/room/names", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL + "/room/names",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       const data = await response.data.result;
       setRoomName(data.map((r) => r.name));
@@ -261,7 +269,7 @@ function Bookings() {
   };
 
   const handleSubmit = async (mode, bookingId) => {
-    if (
+                  if (
       !formData.name ||
       !formData.guest ||
       !formData.from ||
@@ -274,44 +282,55 @@ function Bookings() {
       setIsToError(!formData.to ? false : true);
       setIsRoomError(!formData.room_id ? false : true);
     } else {
-      try {
-        if (mode === "create") {
-          const response = await axios.post(
-            "http://localhost:3005/booking",
-            {
-              name: formData.name,
-              guest: formData.guest,
-              from: formData.from,
-              to: formData.to,
-              room_id: formData.room_id,
-              notes: formData.notes,
+    try {
+      if (mode === "create") {
+        const response = await axios.post(
+          process.env.REACT_APP_API_URL + "/booking",
+          {
+            name: formData.name,
+            guest: formData.guest,
+            from: formData.from,
+            to: formData.to,
+            room_id: formData.room_id,
+            notes: formData.notes,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-          console.log("Server response:", response.data);
-          alert("Booking created!");
-        } else if (mode === "update") {
-          const response = await axios.put(
-            "http://localhost:3005/booking/" + bookingId,
-            {
-              name: formData.name,
-              guest: formData.guest,
-              from: formData.from,
-              to: formData.to,
-              room_id: formData.room_id,
-              notes: formData.notes,
+          }
+        );
+        console.log("Server response:", response.data);
+        alert("Booking created!");
+      } else if (mode === "update") {
+        const response = await axios.put(
+          process.env.REACT_APP_API_URL + "/booking/" + bookingId,
+          {
+            name: formData.name,
+            guest: formData.guest,
+            from: formData.from,
+            to: formData.to,
+            room_id: formData.room_id,
+            notes: formData.notes,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
+          }
+        );
+        console.log("Server response:", response.data);
+        alert("Booking updated!");
+      } else {
+        const response = await axios.delete(
+          process.env.REACT_APP_API_URL + "/booking/" + bookingId,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
           );
           console.log("Server response:", response.data);
           alert("Booking updated!");

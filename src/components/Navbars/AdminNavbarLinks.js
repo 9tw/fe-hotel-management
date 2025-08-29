@@ -49,7 +49,7 @@ export default function HeaderLinks(props) {
   const handleLogout = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:3005/auth/logout",
+        process.env.REACT_APP_API_URL + "/auth/logout",
         {},
         {
           headers: {

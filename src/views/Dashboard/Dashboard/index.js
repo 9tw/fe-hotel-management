@@ -50,12 +50,15 @@ export default function Dashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await axios.get("http://localhost:3005/dashboard", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL + "/dashboard",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       const result = await response.data.result;
       setData(result);
@@ -72,7 +75,7 @@ export default function Dashboard() {
   const fetchCheckIn = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3005/booking/check-in",
+        process.env.REACT_APP_API_URL + "/booking/check-in",
         {
           headers: {
             "Content-Type": "application/json",
