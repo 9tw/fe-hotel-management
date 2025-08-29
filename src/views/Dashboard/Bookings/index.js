@@ -86,6 +86,11 @@ function Bookings() {
     room_id: null,
     notes: null,
   });
+  const [isNameError, setIsNameError] = useState(true);
+  const [isGuestError, setIsGuestError] = useState(true);
+  const [isFromError, setIsFromError] = useState(true);
+  const [isToError, setIsToError] = useState(true);
+  const [isRoomError, setIsRoomError] = useState(true);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -264,6 +269,19 @@ function Bookings() {
   };
 
   const handleSubmit = async (mode, bookingId) => {
+                  if (
+      !formData.name ||
+      !formData.guest ||
+      !formData.from ||
+      !formData.to ||
+      !formData.room_id
+    ) {
+      setIsNameError(!formData.name ? false : true);
+      setIsGuestError(!formData.guest ? false : true);
+      setIsFromError(!formData.from ? false : true);
+      setIsToError(!formData.to ? false : true);
+      setIsRoomError(!formData.room_id ? false : true);
+    } else {
     try {
       if (mode === "create") {
         const response = await axios.post(
@@ -313,26 +331,38 @@ function Bookings() {
               "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          }
-        );
-        console.log("Server response:", response.data);
-        alert("Booking deleted!");
-      }
+          );
+          console.log("Server response:", response.data);
+          alert("Booking updated!");
+        } else {
+          const response = await axios.delete(
+            "http://localhost:3005/booking/" + bookingId,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("Server response:", response.data);
+          alert("Booking deleted!");
+        }
 
-      setFormData({
-        id: null,
-        name: null,
-        guest: null,
-        from: null,
-        to: null,
-        room_id: null,
-        notes: null,
-      });
-      onClose();
-      fetchBookings(page);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert(error.response?.data?.message || "Something went wrong");
+        setFormData({
+          id: null,
+          name: null,
+          guest: null,
+          from: null,
+          to: null,
+          room_id: null,
+          notes: null,
+        });
+        onClose();
+        fetchBookings(page);
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        alert(error.response?.data?.message || "Something went wrong");
+      }
     }
   };
 
@@ -850,92 +880,112 @@ function Bookings() {
           ) : (
             <ModalBody>
               <FormControl>
-                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                  Name
-                </FormLabel>
-                <Input
-                  borderRadius="15px"
-                  mb="24px"
-                  fontSize="sm"
-                  type="text"
-                  placeholder="Enter guest name"
-                  size="lg"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                />
-                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                  Guests
-                </FormLabel>
-                <Input
-                  borderRadius="15px"
-                  mb="24px"
-                  fontSize="sm"
-                  type="number"
-                  placeholder="Enter number of guest(s)"
-                  size="lg"
-                  value={formData.guest}
-                  onChange={(e) =>
-                    setFormData({ ...formData, guest: e.target.value })
-                  }
-                />
-                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                  From
-                </FormLabel>
-                <Input
-                  borderRadius="15px"
-                  mb="24px"
-                  fontSize="sm"
-                  type="date"
-                  placeholder="Enter guest arrival"
-                  size="lg"
-                  value={moment(formData.from).format("YYYY-MM-DD")}
-                  onChange={(e) =>
-                    setFormData({ ...formData, from: e.target.value })
-                  }
-                />
-                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                  To
-                </FormLabel>
-                <Input
-                  borderRadius="15px"
-                  mb="24px"
-                  fontSize="sm"
-                  type="date"
-                  placeholder="Enter guest leaving"
-                  size="lg"
-                  value={moment(formData.to).format("YYYY-MM-DD")}
-                  onChange={(e) =>
-                    setFormData({ ...formData, to: e.target.value })
-                  }
-                />
-                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                  Room
-                </FormLabel>
-                <Select
-                  borderRadius="15px"
-                  mb="24px"
-                  fontSize="sm"
-                  placeholder="Select room number"
-                  size="lg"
-                  value={formData.room_id}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      room_id: parseInt(e.target.value),
-                    })
-                  }
-                >
-                  {rooms.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                  {/* <option value="1">Room 1</option>
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    Name
+                  </FormLabel>
+                  <Input
+                    borderRadius="15px"
+                    fontSize="sm"
+                    type="text"
+                    placeholder="Enter guest name"
+                    size="lg"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                  />
+                  {!isNameError ? (
+                    <Text color="red">Booking Name is Empty</Text>
+                  ) : null}
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    Guests
+                  </FormLabel>
+                  <Input
+                    borderRadius="15px"
+                    fontSize="sm"
+                    type="number"
+                    placeholder="Enter number of guest(s)"
+                    size="lg"
+                    value={formData.guest}
+                    onChange={(e) =>
+                      setFormData({ ...formData, guest: e.target.value })
+                    }
+                  />
+                  {!isGuestError ? (
+                    <Text color="red">Total Booking Guest(s) is Empty</Text>
+                  ) : null}
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    From
+                  </FormLabel>
+                  <Input
+                    borderRadius="15px"
+                    fontSize="sm"
+                    type="date"
+                    placeholder="Enter guest arrival"
+                    size="lg"
+                    value={moment(formData.from).format("YYYY-MM-DD")}
+                    onChange={(e) =>
+                      setFormData({ ...formData, from: e.target.value })
+                    }
+                  />
+                  {!isFromError ? (
+                    <Text color="red">Booking From Date is Empty</Text>
+                  ) : null}
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    To
+                  </FormLabel>
+                  <Input
+                    borderRadius="15px"
+                    fontSize="sm"
+                    type="date"
+                    placeholder="Enter guest leaving"
+                    size="lg"
+                    value={moment(formData.to).format("YYYY-MM-DD")}
+                    onChange={(e) =>
+                      setFormData({ ...formData, to: e.target.value })
+                    }
+                  />
+                  {!isToError ? (
+                    <Text color="red">Booking To Date is Empty</Text>
+                  ) : null}
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    Room
+                  </FormLabel>
+                  <Select
+                    borderRadius="15px"
+                    fontSize="sm"
+                    placeholder="Select room number"
+                    size="lg"
+                    value={formData.room_id}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        room_id: parseInt(e.target.value),
+                      })
+                    }
+                  >
+                    {rooms.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                    {/* <option value="1">Room 1</option>
                   <option value="2">Room 2</option>
                   <option value="3">Room 3</option> */}
-                </Select>
+                  </Select>
+                  {!isRoomError ? (
+                    <Text color="red">Booking Room is Empty</Text>
+                  ) : null}
+                </div>
                 <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
                   Notes
                 </FormLabel>

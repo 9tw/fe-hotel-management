@@ -31,6 +31,7 @@ function SignIn() {
   });
 
   const handleLogin = async () => {
+    if (formData.email != "" && formData.password != "") {
     try {
       const res = await axios.post(
         process.env.REACT_APP_API_URL + "/auth/login",
@@ -40,17 +41,21 @@ function SignIn() {
         }
       );
 
-      // Store token or user info if needed
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user_id", res.data.user.id);
-      localStorage.setItem("name", res.data.user.name);
+        // Store token or user info if needed
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user_id", res.data.user.id);
+        localStorage.setItem("name", res.data.user.name);
 
-      // Redirect to dashboard or home page
-      history.push("/admin/dashboard");
-    } catch (error) {
-      alert(error.response?.data?.message || "Login failed");
+        // Redirect to dashboard or home page
+        history.push("/admin/dashboard");
+      } catch (error) {
+        alert(error.response?.data?.message || "Login failed");
+      }
+    } else {
+      alert("Empty email or password!");
     }
   };
+
   return (
     <Flex position="relative" mb="40px">
       <Flex
