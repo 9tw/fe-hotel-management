@@ -331,21 +331,10 @@ function Bookings() {
               "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          );
+          }
+        );
           console.log("Server response:", response.data);
           alert("Booking updated!");
-        } else {
-          const response = await axios.delete(
-            "http://localhost:3005/booking/" + bookingId,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-          console.log("Server response:", response.data);
-          alert("Booking deleted!");
         }
 
         setFormData({
