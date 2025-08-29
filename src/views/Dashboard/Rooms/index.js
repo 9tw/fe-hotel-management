@@ -48,6 +48,8 @@ function Rooms() {
     name: "",
     status: null,
   });
+  const [isNameError, setIsNameError] = useState(true);
+  const [isStatusError, setIsStatusError] = useState(true);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -80,63 +82,69 @@ function Rooms() {
   };
 
   const handleSubmit = async (mode) => {
-    try {
-      console.log(formData);
-      if (mode === "create") {
-        const response = await axios.post(
-          "http://localhost:3005/room",
-          {
-            name: formData.name,
-            status: formData.status,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+    if (formData.name === "" || !formData.status) {
+      setIsNameError(formData.name === "" ? false : true);
+      setIsStatusError(!formData.status ? false : true);
+    } else {
+      try {
+        if (mode === "create") {
+          const response = await axios.post(
+            "http://localhost:3005/room",
+            {
+              name: formData.name,
+              status: formData.status,
             },
-          }
-        );
-        console.log("Server response:", response.data);
-        alert("Room created!");
-      } else if (mode === "update") {
-        const response = await axios.put(
-          "http://localhost:3005/room/" + id,
-          {
-            name: formData.name,
-            status: formData.status,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("Server response:", response.data);
+          alert("Room created!");
+        } else if (mode === "update") {
+          const response = await axios.put(
+            "http://localhost:3005/room/" + id,
+            {
+              name: formData.name,
+              status: formData.status,
             },
-          }
-        );
-        console.log("Server response:", response.data);
-        alert("Room updated!");
-      } else {
-        const response = await axios.delete(
-          "http://localhost:3005/room/" + id,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        console.log("Server response:", response.data);
-        alert("Room deleted!");
-      }
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("Server response:", response.data);
+          alert("Room updated!");
+        } else {
+          const response = await axios.delete(
+            "http://localhost:3005/room/" + id,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("Server response:", response.data);
+          alert("Room deleted!");
+        }
 
-      setFormData({
-        name: "",
-        status: null,
-      });
-      onClose();
-      fetchRooms(page);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert(error.response?.data?.message || "Something went wrong");
+        setIsNameError(false);
+        setIsStatusError(false);
+        setFormData({
+          name: "",
+          status: null,
+        });
+        onClose();
+        fetchRooms(page);
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        alert(error.response?.data?.message || "Something went wrong");
+      }
     }
   };
 
@@ -404,42 +412,52 @@ function Rooms() {
           ) : (
             <ModalBody>
               <FormControl>
-                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                  Name
-                </FormLabel>
-                <Input
-                  borderRadius="15px"
-                  mb="24px"
-                  fontSize="sm"
-                  type="text"
-                  placeholder="Enter room name"
-                  size="lg"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                />
-                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                  Status
-                </FormLabel>
-                <Select
-                  borderRadius="15px"
-                  mb="24px"
-                  fontSize="sm"
-                  placeholder="Select room status"
-                  size="lg"
-                  value={formData.status}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      status: parseInt(e.target.value),
-                    })
-                  }
-                >
-                  <option value="1">Available</option>
-                  <option value="2">Unavailable</option>
-                  <option value="3">Maintenance</option>
-                </Select>
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    Name
+                  </FormLabel>
+                  <Input
+                    borderRadius="15px"
+                    // mb="24px"
+                    fontSize="sm"
+                    type="text"
+                    placeholder="Enter room name"
+                    size="lg"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                  />
+                  {!isNameError ? (
+                    <Text color="red">Room Name is Empty</Text>
+                  ) : null}
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    Status
+                  </FormLabel>
+                  <Select
+                    borderRadius="15px"
+                    // mb="24px"
+                    fontSize="sm"
+                    placeholder="Select room status"
+                    size="lg"
+                    value={formData.status}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        status: parseInt(e.target.value),
+                      })
+                    }
+                  >
+                    <option value="1">Available</option>
+                    <option value="2">Unavailable</option>
+                    <option value="3">Maintenance</option>
+                  </Select>
+                  {!isStatusError ? (
+                    <Text color="red">Room Status is Empty</Text>
+                  ) : null}
+                </div>
                 {/* <Input
                   borderRadius="15px"
                   mb="24px"
