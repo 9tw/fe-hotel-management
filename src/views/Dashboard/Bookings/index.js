@@ -269,7 +269,7 @@ function Bookings() {
   };
 
   const handleSubmit = async (mode, bookingId) => {
-                  if (
+    if (
       !formData.name ||
       !formData.guest ||
       !formData.from ||
@@ -282,57 +282,57 @@ function Bookings() {
       setIsToError(!formData.to ? false : true);
       setIsRoomError(!formData.room_id ? false : true);
     } else {
-    try {
-      if (mode === "create") {
-        const response = await axios.post(
-          process.env.REACT_APP_API_URL + "/booking",
-          {
-            name: formData.name,
-            guest: formData.guest,
-            from: formData.from,
-            to: formData.to,
-            room_id: formData.room_id,
-            notes: formData.notes,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+      try {
+        if (mode === "create") {
+          const response = await axios.post(
+            process.env.REACT_APP_API_URL + "/booking",
+            {
+              name: formData.name,
+              guest: formData.guest,
+              from: formData.from,
+              to: formData.to,
+              room_id: formData.room_id,
+              notes: formData.notes,
             },
-          }
-        );
-        console.log("Server response:", response.data);
-        alert("Booking created!");
-      } else if (mode === "update") {
-        const response = await axios.put(
-          process.env.REACT_APP_API_URL + "/booking/" + bookingId,
-          {
-            name: formData.name,
-            guest: formData.guest,
-            from: formData.from,
-            to: formData.to,
-            room_id: formData.room_id,
-            notes: formData.notes,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("Server response:", response.data);
+          alert("Booking created!");
+        } else if (mode === "update") {
+          const response = await axios.put(
+            process.env.REACT_APP_API_URL + "/booking/" + bookingId,
+            {
+              name: formData.name,
+              guest: formData.guest,
+              from: formData.from,
+              to: formData.to,
+              room_id: formData.room_id,
+              notes: formData.notes,
             },
-          }
-        );
-        console.log("Server response:", response.data);
-        alert("Booking updated!");
-      } else {
-        const response = await axios.delete(
-          process.env.REACT_APP_API_URL + "/booking/" + bookingId,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("Server response:", response.data);
+          alert("Booking updated!");
+        } else {
+          const response = await axios.delete(
+            process.env.REACT_APP_API_URL + "/booking/" + bookingId,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
           console.log("Server response:", response.data);
           alert("Booking updated!");
         }
@@ -346,6 +346,11 @@ function Bookings() {
           room_id: null,
           notes: null,
         });
+        setIsNameError(true);
+        setIsGuestError(true);
+        setIsFromError(true);
+        setIsToError(true);
+        setIsRoomError(true);
         onClose();
         fetchBookings(page);
       } catch (error) {
