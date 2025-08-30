@@ -82,64 +82,63 @@ function Rooms() {
   };
 
   const handleSubmit = async (mode) => {
-      if (formData.name === "" || !formData.status) {
+    if (formData.name === "" || !formData.status) {
       setIsNameError(formData.name === "" ? false : true);
       setIsStatusError(!formData.status ? false : true);
     } else {
-    try {
-      console.log(formData);
-      if (mode === "create") {
-        const response = await axios.post(
-          process.env.REACT_APP_API_URL + "/room",
-          {
-            name: formData.name,
-            status: formData.status,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+      try {
+        if (mode === "create") {
+          const response = await axios.post(
+            process.env.REACT_APP_API_URL + "/room",
+            {
+              name: formData.name,
+              status: formData.status,
             },
-          }
-        );
-        console.log("Server response:", response.data);
-        alert("Room created!");
-      } else if (mode === "update") {
-        const response = await axios.put(
-          process.env.REACT_APP_API_URL + "/room/" + id,
-          {
-            name: formData.name,
-            status: formData.status,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("Server response:", response.data);
+          alert("Room created!");
+        } else if (mode === "update") {
+          const response = await axios.put(
+            process.env.REACT_APP_API_URL + "/room/" + id,
+            {
+              name: formData.name,
+              status: formData.status,
             },
-          }
-        );
-        console.log("Server response:", response.data);
-        alert("Room updated!");
-      } else {
-        const response = await axios.delete(
-          process.env.REACT_APP_API_URL + "/room/" + id,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        console.log("Server response:", response.data);
-        alert("Room deleted!");
-      }
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("Server response:", response.data);
+          alert("Room updated!");
+        } else {
+          const response = await axios.delete(
+            process.env.REACT_APP_API_URL + "/room/" + id,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("Server response:", response.data);
+          alert("Room deleted!");
+        }
 
-        setIsNameError(false);
-        setIsStatusError(false);
         setFormData({
           name: "",
           status: null,
         });
+        setIsNameError(true);
+        setIsStatusError(true);
         onClose();
         fetchRooms(page);
       } catch (error) {
