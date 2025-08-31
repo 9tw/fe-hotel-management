@@ -47,6 +47,7 @@ export default function Dashboard() {
   ]);
   const [data, setData] = useState([]);
   const [checkIn, setCheckIn] = useState([]);
+  const [checkInTomorrow, setCheckInTomorrow] = useState([]);
 
   const fetchDashboardData = async () => {
     try {
@@ -72,10 +73,10 @@ export default function Dashboard() {
     }
   };
 
-  const fetchCheckIn = async () => {
+  const fetchCheckInToday = async () => {
     try {
       const response = await axios.get(
-        process.env.REACT_APP_API_URL + "/booking/check-in",
+        process.env.REACT_APP_API_URL + "/booking/check-in-today",
         {
           headers: {
             "Content-Type": "application/json",
@@ -96,9 +97,34 @@ export default function Dashboard() {
     }
   };
 
+  const fetchCheckInTomorrow = async () => {
+    try {
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL + "/booking/check-in-tomorrow",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const data = await response.data.result;
+      setCheckInTomorrow(data);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        setCheckInTomorrow([]);
+        console.log("No Tomorrow's Check In Found");
+      } else {
+        console.log("Error:", error);
+      }
+    }
+  };
+
   useEffect(() => {
     fetchDashboardData();
-    fetchCheckIn();
+    fetchCheckInToday();
+    fetchCheckInTomorrow();
   }, []);
 
   return (
@@ -175,7 +201,7 @@ export default function Dashboard() {
         />
       </Grid> */}
       <Grid
-        templateColumns={{ sm: "1fr", md: "1fr 1fr", lg: "2fr 1fr" }}
+        templateColumns={{ sm: "1fr", md: "1fr 1fr", lg: "1fr 1fr" }}
         templateRows={{ sm: "1fr auto", md: "1fr", lg: "1fr" }}
         my="26px"
         gap="24px"
@@ -239,11 +265,72 @@ export default function Dashboard() {
             </Tbody>
           </Table>
         </Card>
-        <OrdersOverview
+
+        <Card p="16px" overflowX={{ sm: "scroll", xl: "hidden" }}>
+          <CardHeader>
+            <Flex justify="space-between" w="100%">
+              <Text
+                fontSize="lg"
+                color={textColor}
+                fontWeight="bold"
+                pb=".5rem"
+              >
+                Tomorrow's Check In
+              </Text>
+              <Text
+                fontSize="lg"
+                color={textColor}
+                fontWeight="bold"
+                pb=".5rem"
+              >
+                {moment(today).add(1, "days").format("ddd, DD MMM YYYY")}
+              </Text>
+            </Flex>
+          </CardHeader>
+          <Table variant="simple" color={textColor}>
+            <Thead>
+              <Tr my=".8rem" ps="0px">
+                {captions.map((caption, idx) => {
+                  return (
+                    <Th
+                      color="gray.400"
+                      key={idx}
+                      ps={idx === 0 ? "0px" : null}
+                    >
+                      {caption}
+                    </Th>
+                  );
+                })}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {checkInTomorrow.length != 0
+                ? checkInTomorrow.map((row) => {
+                    return (
+                      <Tr>
+                        <Td>{row?.room?.name}</Td>
+                        <Td>{row?.name}</Td>
+                        <Td>{row?.guest}</Td>
+                        <Td>{row?.night}</Td>
+                        <Td>
+                          {" "}
+                          <Text whiteSpace="normal" wordBreak="break-word">
+                            {row?.notes}
+                          </Text>
+                        </Td>
+                      </Tr>
+                    );
+                  })
+                : null}
+            </Tbody>
+          </Table>
+        </Card>
+
+        {/* <OrdersOverview
           title={"Standard Operating Procedure"}
           // amount={30}
           data={timelineData}
-        />
+        /> */}
       </Grid>
     </Flex>
   );
