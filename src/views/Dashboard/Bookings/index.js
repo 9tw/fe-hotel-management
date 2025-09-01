@@ -194,7 +194,11 @@ function Bookings() {
   const fetchRooms = async () => {
     try {
       const response = await axios.get(
-        process.env.REACT_APP_API_URL + "/room",
+        process.env.REACT_APP_API_URL +
+          "/room/filter?from=" +
+          formData.from +
+          "&to=" +
+          formData.to,
         {
           headers: {
             "Content-Type": "application/json",
@@ -361,9 +365,12 @@ function Bookings() {
   };
 
   useEffect(() => {
-    fetchRooms();
     fetchRoomName();
   }, []);
+
+  useEffect(() => {
+    fetchRooms();
+  }, [formData.from, formData.to]);
 
   useEffect(() => {
     fetchBookings(page);
