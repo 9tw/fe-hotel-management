@@ -8,6 +8,7 @@ import SignIn from "views/Auth/SignIn.js";
 import SignUp from "views/Auth/SignUp.js";
 import Rooms from "views/Dashboard/Rooms";
 import Bookings from "views/Dashboard/Bookings";
+import Staff from "views/Dashboard/Staff";
 
 import {
   HomeIcon,
@@ -24,6 +25,7 @@ import {
   FaUserAlt,
   FaExchangeAlt,
   FaChair,
+  FaUsers,
 } from "react-icons/fa";
 
 var dashRoutes = [
@@ -57,6 +59,15 @@ var dashRoutes = [
     rtlName: "لوحة القيادة",
     icon: <FaBed color="inherit" />,
     component: Rooms,
+    layout: "/admin",
+  },
+  {
+    path: "/staff",
+    name: "Staff",
+    rtlName: "لوحة القيادة",
+    icon: <FaUsers color="inherit" />,
+    // secondaryNavbar: true,
+    component: Staff,
     layout: "/admin",
   },
   {
