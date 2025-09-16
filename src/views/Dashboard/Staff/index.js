@@ -27,13 +27,19 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  Select,
+  Box,
+  Image,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
-import { FaEllipsisV, FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
+import {
+  FaEllipsisV,
+  FaRegEdit,
+  FaRegTrashAlt,
+  FaRegUser,
+} from "react-icons/fa";
 import axios from "axios";
 import moment from "moment";
 
@@ -60,6 +66,7 @@ function Staff() {
     address: null,
     start: null,
     salary: null,
+    photo: null,
   });
   const [isNameError, setIsNameError] = useState(true);
   const [isPositionError, setIsPositionError] = useState(true);
@@ -68,7 +75,8 @@ function Staff() {
   const [isAddressError, setIsAddressError] = useState(true);
   const [isStartError, setIsStartError] = useState(true);
   const [isSalaryError, setIsSalaryError] = useState(true);
-  // const [isPhotoError, setIsPhotoError] = useState(true);
+  const [isPhotoError, setIsPhotoError] = useState(true);
+  const [isPhotoData, setIsPhotoData] = useState();
   const [salary, setSalary] = useState(0);
   const [seguranca, setSeguranca] = useState(0);
   const [total, setTotal] = useState(0);
@@ -122,6 +130,7 @@ function Staff() {
       );
 
       const data = await response.data.result[0];
+      setIsPhotoData(data.photo != null ? true : false);
       setFormData({
         name: data.name,
         position: data.position,
@@ -130,6 +139,7 @@ function Staff() {
         address: data.address,
         start: data.start_date,
         salary: data.salary,
+        photo: data.photo,
       });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -141,6 +151,7 @@ function Staff() {
           address: null,
           start: null,
           salary: null,
+          photo: null,
         });
         console.log("No Staff Found");
       } else {
@@ -151,13 +162,15 @@ function Staff() {
 
   const handleSubmit = async (mode) => {
     if (
-      !formData.name ||
-      !formData.position ||
-      !formData.ttl ||
-      !formData.phone ||
-      !formData.address ||
-      !formData.start ||
-      !formData.salary
+      (!formData.name ||
+        !formData.position ||
+        !formData.ttl ||
+        !formData.phone ||
+        !formData.address ||
+        !formData.start ||
+        !formData.salary ||
+        !formData.photo) &&
+      mode != "delete"
     ) {
       setIsNameError(!formData.name ? false : true);
       setIsPositionError(!formData.position ? false : true);
@@ -166,10 +179,11 @@ function Staff() {
       setIsAddressError(!formData.address ? false : true);
       setIsStartError(!formData.start ? false : true);
       setIsSalaryError(!formData.salary ? false : true);
+      setIsPhotoError(!formData.photo ? false : true);
     } else {
       try {
         if (mode === "create") {
-          console.log(formData);
+          // console.log(formData);
           const response = await axios.post(
             process.env.REACT_APP_API_URL + "/staff",
             {
@@ -180,10 +194,11 @@ function Staff() {
               address: formData.address,
               start_date: formData.start,
               salary: formData.salary,
+              photo: formData.photo,
             },
             {
               headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
             }
@@ -191,6 +206,7 @@ function Staff() {
           console.log("Server response:", response.data);
           alert("Staff created!");
         } else if (mode === "update") {
+          // console.log(formData);
           const response = await axios.put(
             process.env.REACT_APP_API_URL + "/staff/" + id,
             {
@@ -201,10 +217,11 @@ function Staff() {
               address: formData.address,
               start_date: formData.start,
               salary: formData.salary,
+              photo: formData.photo,
             },
             {
               headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
             }
@@ -233,6 +250,7 @@ function Staff() {
           address: null,
           start: null,
           salary: null,
+          photo: null,
         });
         setIsNameError(true);
         setIsPositionError(true);
@@ -241,6 +259,7 @@ function Staff() {
         setIsAddressError(true);
         setIsStartError(true);
         setIsSalaryError(true);
+        setIsPhotoError(true);
         onClose();
         fetchStaffs();
       } catch (error) {
@@ -251,10 +270,10 @@ function Staff() {
   };
 
   const handleModal = (id, name, mode) => {
-    if (mode === "update") {
+    setId(id);
+    if (mode === "update" || mode === "detail") {
       fetchStaffById(id);
     } else if (mode === "delete") {
-      setId(id);
       setFormData({
         name: name,
       });
@@ -272,7 +291,9 @@ function Staff() {
       address: null,
       start: null,
       salary: null,
+      photo: null,
     });
+    setIsPhotoData();
     onClose();
   };
 
@@ -407,6 +428,19 @@ function Staff() {
                         <MenuList minW="100px">
                           <MenuItem
                             onClick={() =>
+                              handleModal(row.id, row.name, "detail")
+                            }
+                          >
+                            <Icon
+                              as={FaRegUser}
+                              color="blue.400"
+                              cursor="pointer"
+                              style={{ marginRight: "10%" }}
+                            />
+                            Detail
+                          </MenuItem>
+                          <MenuItem
+                            onClick={() =>
                               handleModal(row.id, row.name, "update")
                             }
                           >
@@ -456,10 +490,76 @@ function Staff() {
               ? `Create`
               : mode === "update"
               ? `Update`
-              : `Delete`}
+              : mode === "delete"
+              ? `Delete`
+              : `Detail`}
           </ModalHeader>
           <ModalCloseButton />
-          {mode === "delete" ? (
+          {mode === "detail" ? (
+            <ModalBody>
+              <Box mt={4} justify="center" align="center">
+                <Image
+                  src={process.env.REACT_APP_API_URL + formData.photo}
+                  alt="Photo"
+                  boxSize="200px"
+                  objectFit="cover"
+                />
+              </Box>
+              <Text>Name: {formData.name}</Text>
+              <Text>Position: {formData.position}</Text>
+              <Text>Place & Date of Birth: {formData.ttl}</Text>
+              <Text>Address: {formData.address}</Text>
+              <Text>Phone Number: {formData.phone}</Text>
+              <Text>Salary: ${formData.salary}</Text>
+              <Text>Seguranca: ${Math.floor(formData.salary / 26)}</Text>
+              <Text>
+                Total: ${formData.salary - Math.floor(formData.salary / 26)}
+              </Text>
+              <Text>
+                Start Working:{" "}
+                {moment(formData.start).format("dddd, DD MMM YYYY")}
+              </Text>
+              <Button
+                onClick={() => setMode("update")}
+                fontSize="10px"
+                // type="submit"
+                variant="outline"
+                borderColor="orange"
+                color="orange"
+                w="50%"
+                h="45"
+                mb="20px"
+                mt="20px"
+                _hover={{
+                  bg: "orange.100",
+                }}
+                // _active={{
+                //   bg: "teal.100",
+                // }}
+              >
+                Update
+              </Button>
+              <Button
+                onClick={() => setMode("delete")}
+                fontSize="10px"
+                // type="submit"
+                bg="orange"
+                w="50%"
+                h="45"
+                mb="20px"
+                color="white"
+                mt="20px"
+                _hover={{
+                  bg: "orange.200",
+                }}
+                // _active={{
+                //   bg: "teal.400",
+                // }}
+              >
+                Delete
+              </Button>
+            </ModalBody>
+          ) : mode === "delete" ? (
             <ModalBody>
               <Text textAlign="center">
                 You sure to delete {formData.name} ?
@@ -646,6 +746,38 @@ function Staff() {
                     <Text color="red">Staff Salary is Empty</Text>
                   ) : null}
                 </div>
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel>Photo</FormLabel>
+                  <Input
+                    type="file"
+                    border="0"
+                    borderRadius="0"
+                    padding="0"
+                    accept="image/*"
+                    onChange={(e) => {
+                      setFormData({ ...formData, photo: e.target.files[0] });
+                      setIsPhotoData(false);
+                    }}
+                  />
+                  {formData.photo && (
+                    <Box mt={4}>
+                      <Image
+                        src={
+                          mode === "update" && isPhotoData
+                            ? process.env.REACT_APP_API_URL + formData.photo
+                            : URL.createObjectURL(formData.photo)
+                        }
+                        alt="Preview"
+                        boxSize="200px"
+                        objectFit="cover"
+                      />
+                    </Box>
+                  )}
+                  {!isPhotoError ? (
+                    <Text color="red">Staff Photo is Empty</Text>
+                  ) : null}
+                </div>
+
                 {/* <div style={{ marginBottom: 24 }}>
                   <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
                     Photo

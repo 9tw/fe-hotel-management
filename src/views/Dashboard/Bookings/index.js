@@ -568,6 +568,7 @@ function Bookings() {
                                 onClick={() =>
                                   handleModal(item?.bookings[0]?.id, "detail")
                                 }
+                                cursor="pointer"
                               >
                                 <Tooltip
                                   label={item?.bookings[0]?.name}
@@ -778,7 +779,7 @@ function Bookings() {
               ? `Create`
               : mode === "update"
               ? `Update`
-              : mode === "update"
+              : mode === "delete"
               ? `Delete`
               : `Detail`}
           </ModalHeader>
