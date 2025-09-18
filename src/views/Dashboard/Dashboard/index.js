@@ -46,9 +46,10 @@ export default function Dashboard() {
     "Notes",
   ]);
   const [data, setData] = useState([]);
-  const [checkOut, setCheckOut] = useState([]);
   const [checkIn, setCheckIn] = useState([]);
   const [checkInTomorrow, setCheckInTomorrow] = useState([]);
+  const [checkOut, setCheckOut] = useState([]);
+  const [checkOutTomorrow, setCheckOutTomorrow] = useState([]);
 
   const fetchDashboardData = async () => {
     try {
@@ -68,30 +69,6 @@ export default function Dashboard() {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         setData([]);
         console.log("No Data Found");
-      } else {
-        console.log("Error:", error);
-      }
-    }
-  };
-
-  const fetchCheckOutToday = async () => {
-    try {
-      const response = await axios.get(
-        process.env.REACT_APP_API_URL + "/booking/check-out-today",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      const data = await response.data.result;
-      setCheckOut(data);
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 404) {
-        setCheckOut([]);
-        console.log("No Today's Check Out Found");
       } else {
         console.log("Error:", error);
       }
@@ -122,6 +99,30 @@ export default function Dashboard() {
     }
   };
 
+  const fetchCheckOutToday = async () => {
+    try {
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL + "/booking/check-out-today",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const data = await response.data.result;
+      setCheckOut(data);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        setCheckOut([]);
+        console.log("No Today's Check Out Found");
+      } else {
+        console.log("Error:", error);
+      }
+    }
+  };
+
   const fetchCheckInTomorrow = async () => {
     try {
       const response = await axios.get(
@@ -146,11 +147,36 @@ export default function Dashboard() {
     }
   };
 
+  const fetchCheckOutTomorrow = async () => {
+    try {
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL + "/booking/check-out-tomorrow",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const data = await response.data.result;
+      setCheckOutTomorrow(data);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        setCheckOutTomorrow([]);
+        console.log("No Tomorrow's Check Out Found");
+      } else {
+        console.log("Error:", error);
+      }
+    }
+  };
+
   useEffect(() => {
     fetchDashboardData();
-    fetchCheckOutToday();
     fetchCheckInToday();
     fetchCheckInTomorrow();
+    fetchCheckOutToday();
+    fetchCheckOutTomorrow();
   }, []);
 
   return (
@@ -332,6 +358,66 @@ export default function Dashboard() {
             <Tbody>
               {checkIn.length != 0
                 ? checkIn.map((row) => {
+                    return (
+                      <Tr>
+                        <Td>{row?.room?.name}</Td>
+                        <Td>{row?.name}</Td>
+                        <Td>{row?.guest}</Td>
+                        <Td>{row?.night}</Td>
+                        <Td>
+                          {" "}
+                          <Text whiteSpace="normal" wordBreak="break-word">
+                            {row?.notes}
+                          </Text>
+                        </Td>
+                      </Tr>
+                    );
+                  })
+                : null}
+            </Tbody>
+          </Table>
+        </Card>
+
+        <Card p="16px" overflowX={{ sm: "scroll", xl: "hidden" }}>
+          <CardHeader>
+            <Flex justify="space-between" w="100%">
+              <Text
+                fontSize="lg"
+                color={textColor}
+                fontWeight="bold"
+                pb=".5rem"
+              >
+                Tomorrow's Check Out
+              </Text>
+              <Text
+                fontSize="lg"
+                color={textColor}
+                fontWeight="bold"
+                pb=".5rem"
+              >
+                {moment(today).add(1, "days").format("ddd, DD MMM YYYY")}
+              </Text>
+            </Flex>
+          </CardHeader>
+          <Table variant="simple" color={textColor}>
+            <Thead>
+              <Tr my=".8rem" ps="0px">
+                {captions.map((caption, idx) => {
+                  return (
+                    <Th
+                      color="gray.400"
+                      key={idx}
+                      ps={idx === 0 ? "0px" : null}
+                    >
+                      {caption}
+                    </Th>
+                  );
+                })}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {checkOutTomorrow.length != 0
+                ? checkOutTomorrow.map((row) => {
                     return (
                       <Tr>
                         <Td>{row?.room?.name}</Td>
