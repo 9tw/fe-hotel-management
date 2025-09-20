@@ -38,7 +38,7 @@ import {
   FaEllipsisV,
   FaRegEdit,
   FaRegTrashAlt,
-  FaRegUser,
+  FaSearch,
 } from "react-icons/fa";
 import axios from "axios";
 import moment from "moment";
@@ -432,7 +432,7 @@ function Staff() {
                             }
                           >
                             <Icon
-                              as={FaRegUser}
+                              as={FaSearch}
                               color="blue.400"
                               cursor="pointer"
                               style={{ marginRight: "10%" }}

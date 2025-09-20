@@ -9,6 +9,8 @@ import SignUp from "views/Auth/SignUp.js";
 import Rooms from "views/Dashboard/Rooms";
 import Bookings from "views/Dashboard/Bookings";
 import Staff from "views/Dashboard/Staff";
+import Inventory from "views/Dashboard/Inventory";
+import RoomDetail from "views/Dashboard/Rooms/Detail";
 
 import {
   HomeIcon,
@@ -62,6 +64,14 @@ var dashRoutes = [
     layout: "/admin",
   },
   {
+    path: "/inventory",
+    name: "Inventory",
+    rtlName: "لوحة القيادة",
+    icon: <FaChair color="inherit" />,
+    component: Inventory,
+    layout: "/admin",
+  },
+  {
     path: "/staff",
     name: "Staff",
     rtlName: "لوحة القيادة",
@@ -80,11 +90,11 @@ var dashRoutes = [
     layout: "/admin",
   },
   {
-    path: "/tables",
-    name: "Inventory",
+    path: "/room-inventory",
+    name: "Room Inventory",
     rtlName: "لوحة القيادة",
-    icon: <FaChair color="inherit" />,
-    component: Tables,
+    icon: <FaBed color="inherit" />,
+    component: RoomDetail,
     layout: "/admin",
   },
   // {

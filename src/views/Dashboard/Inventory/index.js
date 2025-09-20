@@ -33,33 +33,34 @@ import React, { useState, useEffect } from "react";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
-import { FaEllipsisV, FaRegEdit, FaRegTrashAlt, FaBoxes } from "react-icons/fa";
+import { FaEllipsisV, FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
 
-function Rooms() {
-  const history = useHistory();
+function Inventory() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const textColor = useColorModeValue("gray.700", "white");
-  const [captions, setCaptions] = useState(["Name", "Status", ""]);
+  const [captions, setCaptions] = useState(["Name", "Stock", "Notes", ""]);
   const [mode, setMode] = useState();
   const [id, setId] = useState();
-  const [rooms, setRooms] = useState([]);
+  const [inventory, setInventory] = useState([]);
   const [formData, setFormData] = useState({
+    room_id: null,
     name: null,
-    status: null,
+    stock: null,
+    notes: null,
   });
   const [isNameError, setIsNameError] = useState(true);
-  const [isStatusError, setIsStatusError] = useState(true);
+  const [isStockError, setIsStockError] = useState(true);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchRooms = async (page) => {
+  const fetchInventories = async (page) => {
     try {
       const response = await axios.get(
-        process.env.REACT_APP_API_URL + `/room/all?page=${page}&limit=${limit}`,
+        process.env.REACT_APP_API_URL +
+          `/inventory/all?id=0&page=${page}&limit=${limit}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -71,12 +72,12 @@ function Rooms() {
       const data = await response.data.result;
       const pagination = await response.data.pagination.totalPages;
 
-      setRooms(data);
+      setInventory(data);
       setTotalPages(pagination);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
-        setRooms([]);
-        console.log("No Room Found");
+        setInventory([]);
+        console.log("No Inventory Found");
       } else {
         console.log("Error:", error);
       }
@@ -84,17 +85,19 @@ function Rooms() {
   };
 
   const handleSubmit = async (mode) => {
-    if (!formData.name || !formData.status) {
+    if (!formData.name || !formData.stock) {
       setIsNameError(!formData.name ? false : true);
-      setIsStatusError(!formData.status ? false : true);
+      setIsStockError(!formData.stock ? false : true);
     } else {
       try {
         if (mode === "create") {
           const response = await axios.post(
-            process.env.REACT_APP_API_URL + "/room",
+            process.env.REACT_APP_API_URL + "/inventory",
             {
+              room_id: 0,
               name: formData.name,
-              status: formData.status,
+              stock: formData.stock,
+              notes: formData.notes,
             },
             {
               headers: {
@@ -104,13 +107,15 @@ function Rooms() {
             }
           );
           console.log("Server response:", response.data);
-          alert("Room created!");
+          alert("Inventory created!");
         } else if (mode === "update") {
           const response = await axios.put(
-            process.env.REACT_APP_API_URL + "/room/" + id,
+            process.env.REACT_APP_API_URL + "/inventory/" + id,
             {
+              room_id: 0,
               name: formData.name,
-              status: formData.status,
+              stock: formData.stock,
+              notes: formData.notes,
             },
             {
               headers: {
@@ -120,10 +125,10 @@ function Rooms() {
             }
           );
           console.log("Server response:", response.data);
-          alert("Room updated!");
+          alert("Inventory updated!");
         } else {
           const response = await axios.delete(
-            process.env.REACT_APP_API_URL + "/room/" + id,
+            process.env.REACT_APP_API_URL + "/inventory/" + id,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -132,17 +137,19 @@ function Rooms() {
             }
           );
           console.log("Server response:", response.data);
-          alert("Room deleted!");
+          alert("Inventory deleted!");
         }
 
         setFormData({
+          room_id: null,
           name: null,
-          status: null,
+          stock: null,
+          notes: null,
         });
         setIsNameError(true);
-        setIsStatusError(true);
+        setIsStockError(true);
         onClose();
-        fetchRooms(page);
+        fetchInventories(page);
       } catch (error) {
         console.error("Error submitting form:", error);
         alert(error.response?.data?.message || "Something went wrong");
@@ -150,12 +157,13 @@ function Rooms() {
     }
   };
 
-  const handleModal = (id, name, status, mode) => {
+  const handleModal = (id, name, stock, notes, mode) => {
     if (mode !== "create") {
       setId(id);
       setFormData({
         name: name,
-        status: status,
+        stock: stock,
+        notes: notes,
       });
     }
     setMode(mode);
@@ -165,15 +173,16 @@ function Rooms() {
   const handleClose = () => {
     setFormData({
       name: null,
-      status: null,
+      stock: null,
+      notes: null,
     });
     setIsNameError(true);
-    setIsStatusError(true);
+    setIsStockError(true);
     onClose();
   };
 
   useEffect(() => {
-    fetchRooms(page);
+    fetchInventories(page);
   }, [page]);
 
   return (
@@ -190,7 +199,7 @@ function Rooms() {
               p="0px"
               bg="orange"
               w="200%"
-              onClick={() => handleModal(null, null, null, "create")}
+              onClick={() => handleModal(null, null, null, null, "create")}
             >
               <Text color="white">Add</Text>
             </Button>
@@ -214,12 +223,12 @@ function Rooms() {
               </Tr>
             </Thead>
             <Tbody>
-              {rooms.map((row) => {
+              {inventory.map((row) => {
                 return (
                   <Tr>
                     <Td>
-                      {/* <Td minWidth={{ sm: "250px" }} pl="0px">
-                      <Flex
+                      {/* <Td minWidth={{ sm: "250px" }} pl="0px"> */}
+                      {/* <Flex
                         alignItems="center"
                         py=".8rem"
                         minWidth="100%"
@@ -231,51 +240,17 @@ function Rooms() {
                       </Text>
                       {/* </Flex> */}
                     </Td>
-                    {/* <Td>
-                      <Text
-                        fontSize="md"
-                        color={textColor}
-                        fontWeight="bold"
-                        pb=".5rem"
-                      >
-                        {row.budget}
-                      </Text>
-                    </Td> */}
                     <Td>
                       <Text fontSize="md" color={textColor} pb=".5rem">
-                        {row.status === 1
-                          ? `✅`
-                          : row.status === 2
-                          ? `🚫`
-                          : `🛠️`}
+                        {row.stock}
                       </Text>
                     </Td>
-                    {/* <Td>
-                      <Flex direction="column">
-                        <Text
-                          fontSize="md"
-                          color="teal.300"
-                          fontWeight="bold"
-                          pb=".2rem"
-                        >{`${row.progression}%`}</Text>
-                        <Progress
-                          colorScheme={
-                            row.progression === 100 ? "teal" : "cyan"
-                          }
-                          size="xs"
-                          value={row.progression}
-                          borderRadius="15px"
-                        />
-                      </Flex>
-                    </Td> */}
                     <Td>
-                      {/* <Button p="0px" bg="transparent">
-                        <Icon
-                          as={FaEllipsisV}
-                          color="gray.400"
-                          cursor="pointer"
-                        />
-                      </Button> */}
+                      <Text fontSize="md" color={textColor} pb=".5rem">
+                        {row.notes}
+                      </Text>
+                    </Td>
+                    <Td>
                       <Menu>
                         <MenuButton
                           as={Button}
@@ -293,23 +268,11 @@ function Rooms() {
                         <MenuList minW="100px">
                           <MenuItem
                             onClick={() =>
-                              history.push(`/admin/room-inventory?id=` + row.id)
-                            }
-                          >
-                            <Icon
-                              as={FaBoxes}
-                              color="blue.400"
-                              cursor="pointer"
-                              style={{ marginRight: "10%" }}
-                            />
-                            Inventory
-                          </MenuItem>
-                          <MenuItem
-                            onClick={() =>
                               handleModal(
                                 row.id,
                                 row.name,
-                                row.status,
+                                row.stock,
+                                row.notes,
                                 "update"
                               )
                             }
@@ -327,7 +290,8 @@ function Rooms() {
                               handleModal(
                                 row.id,
                                 row.name,
-                                row.status,
+                                row.stock,
+                                row.notes,
                                 "delete"
                               )
                             }
@@ -437,7 +401,7 @@ function Rooms() {
                     // mb="24px"
                     fontSize="sm"
                     type="text"
-                    placeholder="Enter room name"
+                    placeholder="Enter inventory name"
                     size="lg"
                     value={formData.name}
                     onChange={(e) =>
@@ -445,47 +409,46 @@ function Rooms() {
                     }
                   />
                   {!isNameError ? (
-                    <Text color="red">Room Name is Empty</Text>
+                    <Text color="red">Inventory Name is Empty</Text>
                   ) : null}
                 </div>
                 <div style={{ marginBottom: 24 }}>
                   <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                    Status
+                    Stock
                   </FormLabel>
-                  <Select
+                  <Input
                     borderRadius="15px"
                     // mb="24px"
                     fontSize="sm"
-                    placeholder="Select room status"
+                    type="number"
+                    placeholder="Enter inventory stock"
                     size="lg"
-                    value={formData.status}
+                    value={formData.stock}
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        status: parseInt(e.target.value),
-                      })
+                      setFormData({ ...formData, stock: e.target.value })
                     }
-                  >
-                    <option value="1">Available</option>
-                    <option value="2">Unavailable</option>
-                    <option value="3">Maintenance</option>
-                  </Select>
-                  {!isStatusError ? (
-                    <Text color="red">Room Status is Empty</Text>
+                  />
+                  {!isStockError ? (
+                    <Text color="red">Inventory Stock is Empty</Text>
                   ) : null}
                 </div>
-                {/* <Input
-                  borderRadius="15px"
-                  mb="24px"
-                  fontSize="sm"
-                  type="text"
-                  placeholder="Enter room status"
-                  size="lg"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, status: e.target.value })
-                  }
-                /> */}
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    Notes
+                  </FormLabel>
+                  <Input
+                    borderRadius="15px"
+                    // mb="24px"
+                    fontSize="sm"
+                    type="text"
+                    placeholder="Enter inventory notes"
+                    size="lg"
+                    value={formData.notes}
+                    onChange={(e) =>
+                      setFormData({ ...formData, notes: e.target.value })
+                    }
+                  />
+                </div>
                 <Button
                   onClick={() => handleClose()}
                   fontSize="10px"
@@ -528,17 +491,10 @@ function Rooms() {
               </FormControl>
             </ModalBody>
           )}
-
-          {/* <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button colorScheme="blue">Save</Button>
-          </ModalFooter> */}
         </ModalContent>
       </Modal>
     </Flex>
   );
 }
 
-export default Rooms;
+export default Inventory;

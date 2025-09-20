@@ -368,12 +368,7 @@ function Profile() {
                         flexWrap="nowrap"
                       >
                         {/* <Icon as={row.logo} h={"24px"} w={"24px"} me="18px" /> */}
-                        <Text
-                          fontSize="md"
-                          color={textColor}
-                          fontWeight="bold"
-                          minWidth="100%"
-                        >
+                        <Text fontSize="md" color={textColor} minWidth="100%">
                           {row.name}
                         </Text>
                       </Flex>
@@ -389,12 +384,7 @@ function Profile() {
                           </Text>
                         </Td> */}
                     <Td>
-                      <Text
-                        fontSize="md"
-                        color={textColor}
-                        fontWeight="bold"
-                        pb=".5rem"
-                      >
+                      <Text fontSize="md" color={textColor} pb=".5rem">
                         {row.email}
                       </Text>
                     </Td>

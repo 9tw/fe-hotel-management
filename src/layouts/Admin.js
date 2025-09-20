@@ -95,7 +95,7 @@ export default function Dashboard(props) {
   const getAdminRoutes = (routes) => {
     var adminRoutes = [];
     routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
+      if (prop.layout === "/admin" && prop.path !== "/room-inventory") {
         adminRoutes.push(prop);
       }
     });
