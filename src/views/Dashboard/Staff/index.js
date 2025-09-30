@@ -39,6 +39,7 @@ import {
   FaRegEdit,
   FaRegTrashAlt,
   FaSearch,
+  FaRegCalendarCheck,
 } from "react-icons/fa";
 import axios from "axios";
 import moment from "moment";
@@ -50,6 +51,7 @@ function Staff() {
   const [captions, setCaptions] = useState([
     "Name",
     "Position",
+    "Annual Leave",
     "Salary",
     "Seguranca",
     "Total",
@@ -67,6 +69,8 @@ function Staff() {
     start: null,
     salary: null,
     photo: null,
+    leave: null,
+    cut: null,
   });
   const [isNameError, setIsNameError] = useState(true);
   const [isPositionError, setIsPositionError] = useState(true);
@@ -77,6 +81,8 @@ function Staff() {
   const [isSalaryError, setIsSalaryError] = useState(true);
   const [isPhotoError, setIsPhotoError] = useState(true);
   const [isPhotoData, setIsPhotoData] = useState();
+  const [isLeaveError, setIsLeaveError] = useState(true);
+  const [isCutError, setIsCutError] = useState(true);
   const [salary, setSalary] = useState(0);
   const [seguranca, setSeguranca] = useState(0);
   const [total, setTotal] = useState(0);
@@ -140,6 +146,8 @@ function Staff() {
         start: data.start_date,
         salary: data.salary,
         photo: data.photo,
+        leave: data.leave,
+        cut: data.cut,
       });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -152,6 +160,8 @@ function Staff() {
           start: null,
           salary: null,
           photo: null,
+          leave: null,
+          cut: null,
         });
         console.log("No Staff Found");
       } else {
@@ -161,7 +171,9 @@ function Staff() {
   };
 
   const handleSubmit = async (mode) => {
-    if (
+    if (!formData.cut && mode === "leave") {
+      setIsCutError(!formData.cut ? false : true);
+    } else if (
       (!formData.name ||
         !formData.position ||
         !formData.ttl ||
@@ -169,8 +181,10 @@ function Staff() {
         !formData.address ||
         !formData.start ||
         !formData.salary ||
-        !formData.photo) &&
-      mode != "delete"
+        !formData.photo ||
+        !formData.leave) &&
+      mode != "delete" &&
+      mode != "leave"
     ) {
       setIsNameError(!formData.name ? false : true);
       setIsPositionError(!formData.position ? false : true);
@@ -180,6 +194,7 @@ function Staff() {
       setIsStartError(!formData.start ? false : true);
       setIsSalaryError(!formData.salary ? false : true);
       setIsPhotoError(!formData.photo ? false : true);
+      setIsLeaveError(!formData.leave ? false : true);
     } else {
       try {
         if (mode === "create") {
@@ -195,6 +210,7 @@ function Staff() {
               start_date: formData.start,
               salary: formData.salary,
               photo: formData.photo,
+              leave: formData.leave,
             },
             {
               headers: {
@@ -218,6 +234,7 @@ function Staff() {
               start_date: formData.start,
               salary: formData.salary,
               photo: formData.photo,
+              leave: formData.leave,
             },
             {
               headers: {
@@ -228,6 +245,22 @@ function Staff() {
           );
           console.log("Server response:", response.data);
           alert("Staff updated!");
+        } else if (mode === "leave") {
+          // console.log(formData);
+          const response = await axios.put(
+            process.env.REACT_APP_API_URL + "/staff/" + id,
+            {
+              cut: formData.cut,
+            },
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("Server response:", response.data);
+          alert("Annual Leave updated!");
         } else {
           const response = await axios.delete(
             process.env.REACT_APP_API_URL + "/staff/" + id,
@@ -251,6 +284,8 @@ function Staff() {
           start: null,
           salary: null,
           photo: null,
+          leave: null,
+          cut: null,
         });
         setIsNameError(true);
         setIsPositionError(true);
@@ -260,6 +295,8 @@ function Staff() {
         setIsStartError(true);
         setIsSalaryError(true);
         setIsPhotoError(true);
+        setIsLeaveError(true);
+        setIsCutError(true);
         onClose();
         fetchStaffs();
       } catch (error) {
@@ -292,6 +329,8 @@ function Staff() {
       start: null,
       salary: null,
       photo: null,
+      leave: null,
+      cut: null,
     });
     setIsPhotoData();
     onClose();
@@ -390,6 +429,11 @@ function Staff() {
                     </Td> */}
                     <Td>
                       <Text fontSize="md" color={textColor} minWidth="100%">
+                        {row.leave - row.cut}
+                      </Text>
+                    </Td>
+                    <Td>
+                      <Text fontSize="md" color={textColor} minWidth="100%">
                         ${row.salary}
                       </Text>
                     </Td>
@@ -438,6 +482,17 @@ function Staff() {
                               style={{ marginRight: "10%" }}
                             />
                             Detail
+                          </MenuItem>
+                          <MenuItem
+                            onClick={() => handleModal(row.id, null, "leave")}
+                          >
+                            <Icon
+                              as={FaRegCalendarCheck}
+                              color="orange.400"
+                              cursor="pointer"
+                              style={{ marginRight: "10%" }}
+                            />
+                            Leave
                           </MenuItem>
                           <MenuItem
                             onClick={() =>
@@ -492,6 +547,8 @@ function Staff() {
               ? `Update`
               : mode === "delete"
               ? `Delete`
+              : mode === "leave"
+              ? `Leave`
               : `Detail`}
           </ModalHeader>
           <ModalCloseButton />
@@ -507,6 +564,7 @@ function Staff() {
               </Box>
               <Text>Name: {formData.name}</Text>
               <Text>Position: {formData.position}</Text>
+              <Text>Annual Leave: {formData.leave - formData.cut} Days</Text>
               <Text>Place & Date of Birth: {formData.ttl}</Text>
               <Text>Address: {formData.address}</Text>
               <Text>Phone Number: {formData.phone}</Text>
@@ -603,6 +661,66 @@ function Staff() {
               >
                 Delete
               </Button>
+            </ModalBody>
+          ) : mode === "leave" ? (
+            <ModalBody>
+              <FormControl>
+                <Text textAlign="center">How many days?</Text>
+                <Input
+                  borderRadius="15px"
+                  mt="10px"
+                  fontSize="sm"
+                  type="number"
+                  placeholder="Enter leave days"
+                  size="lg"
+                  value={formData.cut}
+                  onChange={(e) =>
+                    setFormData({ ...formData, cut: e.target.value })
+                  }
+                />
+                {!isCutError ? (
+                  <Text color="red">Leave days is Empty</Text>
+                ) : null}
+                <Button
+                  onClick={() => handleClose()}
+                  fontSize="10px"
+                  // type="submit"
+                  variant="outline"
+                  borderColor="orange"
+                  color="orange"
+                  w="50%"
+                  h="45"
+                  mb="20px"
+                  mt="20px"
+                  _hover={{
+                    bg: "orange.100",
+                  }}
+                  // _active={{
+                  //   bg: "teal.100"
+                  // }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleSubmit(mode)}
+                  fontSize="10px"
+                  type="submit"
+                  bg="orange"
+                  w="50%"
+                  h="45"
+                  mb="20px"
+                  color="white"
+                  mt="20px"
+                  _hover={{
+                    bg: "orange.200",
+                  }}
+                  // _active={{
+                  //   bg: "teal.400",
+                  // }}
+                >
+                  Submit
+                </Button>
+              </FormControl>
             </ModalBody>
           ) : (
             <ModalBody>
@@ -744,6 +862,26 @@ function Staff() {
                   />
                   {!isSalaryError ? (
                     <Text color="red">Staff Salary is Empty</Text>
+                  ) : null}
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    Annual Leave
+                  </FormLabel>
+                  <Input
+                    borderRadius="15px"
+                    // mb="24px"
+                    fontSize="sm"
+                    type="text"
+                    placeholder="Enter staff annual leave"
+                    size="lg"
+                    value={formData.leave}
+                    onChange={(e) =>
+                      setFormData({ ...formData, leave: e.target.value })
+                    }
+                  />
+                  {!isLeaveError ? (
+                    <Text color="red">Staff Annual Leave is Empty</Text>
                   ) : null}
                 </div>
                 <div style={{ marginBottom: 24 }}>

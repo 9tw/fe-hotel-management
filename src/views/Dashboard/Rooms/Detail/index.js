@@ -168,7 +168,7 @@ function Rooms() {
     }
   };
 
-  const handleModal = (id, name, status, mode) => {
+  const handleModal = (id, name, stock, notes, mode) => {
     if (mode !== "create") {
       setId(id);
       setFormData({
@@ -219,7 +219,7 @@ function Rooms() {
               p="0px"
               bg="orange"
               w="10%"
-              onClick={() => handleModal(null, null, null, "create")}
+              onClick={() => handleModal(null, null, null, null, "create")}
             >
               <Text color="white">Add</Text>
             </Button>
