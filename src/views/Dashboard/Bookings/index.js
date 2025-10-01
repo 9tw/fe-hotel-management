@@ -51,6 +51,7 @@ import {
 import moment from "moment";
 
 function Bookings() {
+  const user = localStorage.getItem("name");
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const textColor = useColorModeValue("gray.700", "white");
@@ -68,6 +69,8 @@ function Bookings() {
     "To",
     "Night(s)",
     "Notes",
+    "Created By",
+    "Updated By",
     "",
   ]);
   const [bookings, setBookings] = useState([]);
@@ -85,6 +88,8 @@ function Bookings() {
     to: null,
     room_id: null,
     notes: null,
+    created_by: null,
+    updated_by: null,
   });
   const [isNameError, setIsNameError] = useState(true);
   const [isGuestError, setIsGuestError] = useState(true);
@@ -172,6 +177,8 @@ function Bookings() {
         to: data.to,
         room_id: data.room_id,
         notes: data.notes,
+        created_by: data.created_by,
+        updated_by: data.updated_by,
       });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -183,6 +190,8 @@ function Bookings() {
           to: null,
           room_id: null,
           notes: null,
+          created_by: null,
+          updated_by: null,
         });
         console.log("No Booking Found");
       } else {
@@ -268,6 +277,8 @@ function Bookings() {
       to: null,
       room_id: null,
       notes: null,
+      created_by: null,
+      updated_by: null,
     });
     onClose();
   };
@@ -297,6 +308,7 @@ function Bookings() {
               to: formData.to,
               room_id: formData.room_id,
               notes: formData.notes,
+              created_by: user,
             },
             {
               headers: {
@@ -317,6 +329,7 @@ function Bookings() {
               to: formData.to,
               room_id: formData.room_id,
               notes: formData.notes,
+              updated_by: user,
             },
             {
               headers: {
@@ -349,6 +362,8 @@ function Bookings() {
           to: null,
           room_id: null,
           notes: null,
+          created_by: null,
+          updated_by: null,
         });
         setIsNameError(true);
         setIsGuestError(true);
@@ -667,7 +682,9 @@ function Bookings() {
                           </Text>
                         </Flex>
                       </Td> */}
-                      <Td>{row.room.name}</Td>
+                      <Td my=".8rem" pl="0px">
+                        {row.room.name}
+                      </Td>
                       <Td>{row.name}</Td>
                       <Td>{row.guest}</Td>
                       <Td>{moment(row.from).format("MMM, DD YYYY")}</Td>
@@ -678,6 +695,8 @@ function Bookings() {
                           {row.notes}
                         </Text>
                       </Td>
+                      <Td>{row.created_by}</Td>
+                      <Td>{row.updated_by}</Td>
                       {/* <Td>
                               <Flex direction="column">
                                 <Text

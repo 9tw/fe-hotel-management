@@ -360,18 +360,18 @@ function Profile() {
               {users.map((row) => {
                 return (
                   <Tr>
-                    <Td minWidth={{ sm: "250px" }} pl="0px">
-                      <Flex
+                    <Td my=".8rem" pl="0px">
+                      {/* <Flex
                         alignItems="center"
                         py=".8rem"
                         minWidth="100%"
                         flexWrap="nowrap"
-                      >
-                        {/* <Icon as={row.logo} h={"24px"} w={"24px"} me="18px" /> */}
-                        <Text fontSize="md" color={textColor} minWidth="100%">
-                          {row.name}
-                        </Text>
-                      </Flex>
+                      > */}
+                      {/* <Icon as={row.logo} h={"24px"} w={"24px"} me="18px" /> */}
+                      <Text fontSize="md" color={textColor} minWidth="100%">
+                        {row.name}
+                      </Text>
+                      {/* </Flex> */}
                     </Td>
                     {/* <Td>
                           <Text

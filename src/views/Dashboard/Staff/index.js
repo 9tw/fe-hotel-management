@@ -378,7 +378,7 @@ function Staff() {
               {staff.map((row) => {
                 return (
                   <Tr>
-                    <Td pl="0px">
+                    <Td my=".8rem" pl="0px">
                       {/* <Flex
                         alignItems="center"
                         py=".8rem"

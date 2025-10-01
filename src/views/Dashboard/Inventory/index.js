@@ -226,7 +226,7 @@ function Inventory() {
               {inventory.map((row) => {
                 return (
                   <Tr>
-                    <Td>
+                    <Td my=".8rem" pl="0px">
                       {/* <Td minWidth={{ sm: "250px" }} pl="0px"> */}
                       {/* <Flex
                         alignItems="center"

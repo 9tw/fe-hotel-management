@@ -248,7 +248,9 @@ export default function Dashboard() {
                 ? checkIn.map((row) => {
                     return (
                       <Tr>
-                        <Td>{row?.room?.name}</Td>
+                        <Td my=".8rem" pl="0px">
+                          {row?.room?.name}
+                        </Td>
                         <Td>{row?.name}</Td>
                         <Td>{row?.guest}</Td>
                         <Td>{row?.night}</Td>
@@ -308,7 +310,9 @@ export default function Dashboard() {
                 ? checkInTomorrow.map((row) => {
                     return (
                       <Tr>
-                        <Td>{row?.room?.name}</Td>
+                        <Td my=".8rem" pl="0px">
+                          {row?.room?.name}
+                        </Td>
                         <Td>{row?.name}</Td>
                         <Td>{row?.guest}</Td>
                         <Td>{row?.night}</Td>

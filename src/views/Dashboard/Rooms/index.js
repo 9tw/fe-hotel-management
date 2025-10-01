@@ -181,7 +181,7 @@ function Rooms() {
       <Card
         my="22px"
         overflowX={{ sm: "scroll", xl: "hidden" }}
-        w="50%"
+        w="35%"
         mx="auto"
       >
         <CardHeader p="6px 0px 22px 0px">
@@ -217,7 +217,7 @@ function Rooms() {
               {rooms.map((row) => {
                 return (
                   <Tr>
-                    <Td>
+                    <Td my=".8rem" pl="0px">
                       {/* <Td minWidth={{ sm: "250px" }} pl="0px">
                       <Flex
                         alignItems="center"
