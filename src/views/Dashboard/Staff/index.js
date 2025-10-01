@@ -172,7 +172,7 @@ function Staff() {
 
   const handleSubmit = async (mode) => {
     if (!formData.cut && mode === "leave") {
-      setIsCutError(!formData.cut ? false : true);
+      setIsCutError(false);
     } else if (
       (!formData.name ||
         !formData.position ||
@@ -198,7 +198,6 @@ function Staff() {
     } else {
       try {
         if (mode === "create") {
-          // console.log(formData);
           const response = await axios.post(
             process.env.REACT_APP_API_URL + "/staff",
             {
@@ -222,7 +221,6 @@ function Staff() {
           console.log("Server response:", response.data);
           alert("Staff created!");
         } else if (mode === "update") {
-          // console.log(formData);
           const response = await axios.put(
             process.env.REACT_APP_API_URL + "/staff/" + id,
             {
@@ -246,7 +244,6 @@ function Staff() {
           console.log("Server response:", response.data);
           alert("Staff updated!");
         } else if (mode === "leave") {
-          // console.log(formData);
           const response = await axios.put(
             process.env.REACT_APP_API_URL + "/staff/" + id,
             {
@@ -527,6 +524,7 @@ function Staff() {
                 );
               })}
               <Tr>
+                <Td></Td>
                 <Td></Td>
                 <Td></Td>
                 <Td>${salary}</Td>
