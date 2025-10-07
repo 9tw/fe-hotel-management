@@ -69,6 +69,7 @@ function Bookings() {
     "To",
     "Night(s)",
     "Notes",
+    "Status",
     "Created By",
     "Updated By",
     "",
@@ -88,6 +89,7 @@ function Bookings() {
     to: null,
     room_id: null,
     notes: null,
+    status: null,
     created_by: null,
     updated_by: null,
   });
@@ -96,6 +98,7 @@ function Bookings() {
   const [isFromError, setIsFromError] = useState(true);
   const [isToError, setIsToError] = useState(true);
   const [isRoomError, setIsRoomError] = useState(true);
+  const [isStatusError, setIsStatusError] = useState(true);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -177,6 +180,7 @@ function Bookings() {
         to: data.to,
         room_id: data.room_id,
         notes: data.notes,
+        status: data.status,
         created_by: data.created_by,
         updated_by: data.updated_by,
       });
@@ -190,6 +194,7 @@ function Bookings() {
           to: null,
           room_id: null,
           notes: null,
+          status: null,
           created_by: null,
           updated_by: null,
         });
@@ -277,6 +282,7 @@ function Bookings() {
       to: null,
       room_id: null,
       notes: null,
+      status: null,
       created_by: null,
       updated_by: null,
     });
@@ -289,13 +295,15 @@ function Bookings() {
       !formData.guest ||
       !formData.from ||
       !formData.to ||
-      !formData.room_id
+      !formData.room_id ||
+      !formData.status
     ) {
       setIsNameError(!formData.name ? false : true);
       setIsGuestError(!formData.guest ? false : true);
       setIsFromError(!formData.from ? false : true);
       setIsToError(!formData.to ? false : true);
       setIsRoomError(!formData.room_id ? false : true);
+      setIsStatusError(!formData.status ? false : true);
     } else {
       try {
         if (mode === "create") {
@@ -308,6 +316,7 @@ function Bookings() {
               to: formData.to,
               room_id: formData.room_id,
               notes: formData.notes,
+              status: formData.status,
               created_by: user,
             },
             {
@@ -329,6 +338,7 @@ function Bookings() {
               to: formData.to,
               room_id: formData.room_id,
               notes: formData.notes,
+              status: formData.status,
               updated_by: user,
             },
             {
@@ -362,6 +372,7 @@ function Bookings() {
           to: null,
           room_id: null,
           notes: null,
+          status: null,
           created_by: null,
           updated_by: null,
         });
@@ -370,6 +381,7 @@ function Bookings() {
         setIsFromError(true);
         setIsToError(true);
         setIsRoomError(true);
+        setIsStatusError(true);
         onClose();
         fetchBookings(page);
       } catch (error) {
@@ -695,6 +707,7 @@ function Bookings() {
                           {row.notes}
                         </Text>
                       </Td>
+                      <Td>{row.status === 1 ? "Not Paid Yet" : "Paid"}</Td>
                       <Td>{row.created_by}</Td>
                       <Td>{row.updated_by}</Td>
                       {/* <Td>
@@ -813,6 +826,9 @@ function Bookings() {
               </Text>
               <Text>To: {moment(formData.to).format("dddd, DD MMM YYYY")}</Text>
               <Text>Notes: {formData.notes}</Text>
+              <Text>
+                Status: {formData.status === 1 ? "Not Paid Yet" : "Paid"}
+              </Text>
               <Button
                 onClick={() => setMode("update")}
                 fontSize="10px"
@@ -1021,6 +1037,30 @@ function Bookings() {
                     setFormData({ ...formData, notes: e.target.value })
                   }
                 />
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    Status
+                  </FormLabel>
+                  <Select
+                    borderRadius="15px"
+                    fontSize="sm"
+                    placeholder="Select status"
+                    size="lg"
+                    value={formData.status}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        status: parseInt(e.target.value),
+                      })
+                    }
+                  >
+                    <option value="1">Not Paid Yet</option>
+                    <option value="2">Paid</option>
+                  </Select>
+                  {!isStatusError ? (
+                    <Text color="red">Status is Empty</Text>
+                  ) : null}
+                </div>
                 <Button
                   onClick={() => handleClose()}
                   fontSize="10px"
