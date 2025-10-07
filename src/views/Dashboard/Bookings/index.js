@@ -707,7 +707,17 @@ function Bookings() {
                           {row.notes}
                         </Text>
                       </Td>
-                      <Td>{row.status === 1 ? "Not Paid Yet" : "Paid"}</Td>
+                      <Td>
+                        {row.status === 1 ? (
+                          <Text color="red.500" fontWeight="bold">
+                            Not Paid Yet
+                          </Text>
+                        ) : (
+                          <Text color="green.500" fontWeight="bold">
+                            Paid
+                          </Text>
+                        )}
+                      </Td>
                       <Td>{row.created_by}</Td>
                       <Td>{row.updated_by}</Td>
                       {/* <Td>
@@ -827,7 +837,16 @@ function Bookings() {
               <Text>To: {moment(formData.to).format("dddd, DD MMM YYYY")}</Text>
               <Text>Notes: {formData.notes}</Text>
               <Text>
-                Status: {formData.status === 1 ? "Not Paid Yet" : "Paid"}
+                Status:{" "}
+                {formData.status === 1 ? (
+                  <Text as="span" color="red.500" fontWeight="bold">
+                    Not Paid Yet
+                  </Text>
+                ) : (
+                  <Text as="span" color="green.500" fontWeight="bold">
+                    Paid
+                  </Text>
+                )}
               </Text>
               <Button
                 onClick={() => setMode("update")}

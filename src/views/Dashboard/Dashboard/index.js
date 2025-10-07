@@ -1,5 +1,7 @@
 // Chakra imports
 import {
+  Button,
+  Box,
   Flex,
   Grid,
   Image,
@@ -12,6 +14,14 @@ import {
   Thead,
   Tr,
   useColorModeValue,
+  useDisclosure,
+  Tooltip,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
 } from "@chakra-ui/react";
 // assets
 import peopleImage from "assets/img/people-image.png";
@@ -27,7 +37,13 @@ import OrdersOverview from "./components/OrdersOverview";
 import Projects from "./components/Projects";
 import SalesOverview from "./components/SalesOverview";
 import WorkWithTheRockets from "./components/WorkWithTheRockets";
-import { FaBed, FaTools, FaTimes, FaUserAlt } from "react-icons/fa";
+import {
+  FaBed,
+  FaTools,
+  FaTimes,
+  FaUserAlt,
+  FaMoneyBillWave,
+} from "react-icons/fa";
 import axios from "axios";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
@@ -37,6 +53,7 @@ export default function Dashboard() {
   const today = new Date();
   const iconBoxInside = useColorModeValue("white", "white");
   const textColor = useColorModeValue("gray.700", "white");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [captions, setCaptions] = useState([
     "Room",
@@ -48,6 +65,7 @@ export default function Dashboard() {
   const [data, setData] = useState([]);
   const [checkIn, setCheckIn] = useState([]);
   const [checkInTomorrow, setCheckInTomorrow] = useState([]);
+  const [notPaid, setNotPaid] = useState([]);
 
   const fetchDashboardData = async () => {
     try {
@@ -63,6 +81,30 @@ export default function Dashboard() {
 
       const result = await response.data.result;
       setData(result);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        setData([]);
+        console.log("No Data Found");
+      } else {
+        console.log("Error:", error);
+      }
+    }
+  };
+
+  const fetchNotPayYetData = async () => {
+    try {
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL + "/dashboard/not-paid",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const result = await response.data.result;
+      setNotPaid(result);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         setData([]);
@@ -121,6 +163,15 @@ export default function Dashboard() {
     }
   };
 
+  const handleClick = () => {
+    fetchNotPayYetData();
+    onOpen();
+  };
+
+  const handleClose = () => {
+    onClose();
+  };
+
   useEffect(() => {
     fetchDashboardData();
     fetchCheckInToday();
@@ -129,7 +180,29 @@ export default function Dashboard() {
 
   return (
     <Flex flexDirection="column" pt={{ base: "120px", md: "75px" }}>
-      <SimpleGrid columns={{ sm: 1, md: 2, xl: 4 }} spacing="24px">
+      <SimpleGrid columns={{ sm: 1, md: 2, xl: 5 }} spacing="24px">
+        <Tooltip
+          label="View booking not pay yet"
+          placement="top"
+          hasArrow
+          bg="orange.300"
+          color="white"
+        >
+          <Box
+            cursor="pointer"
+            _hover={{ transform: "scale(1.03)", transition: "0.2s" }}
+            onClick={() => handleClick()}
+          >
+            <MiniStatistics
+              title={"Room Paid"}
+              amount={data.roomPaid}
+              // percentage={55}
+              icon={
+                <FaMoneyBillWave h={"24px"} w={"24px"} color={iconBoxInside} />
+              }
+            />
+          </Box>
+        </Tooltip>
         <MiniStatistics
           title={"Room Available"}
           amount={data.roomAvailable}
@@ -329,6 +402,40 @@ export default function Dashboard() {
             </Tbody>
           </Table>
         </Card>
+
+        <Modal isOpen={isOpen} onClose={() => handleClose()} isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Booking Not Pay Yet</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody align="center">
+              {notPaid &&
+                notPaid.map((item) => {
+                  return <Text fontWeight="bold">{item.name}</Text>;
+                })}
+              {/* <Text>Room: {formData.room_id}</Text>
+              <Text>Guest Name: {formData.name}</Text>
+              <Text>Guest(s): {formData.guest}</Text>
+              <Text>
+                From: {moment(formData.from).format("dddd, DD MMM YYYY")}
+              </Text>
+              <Text>To: {moment(formData.to).format("dddd, DD MMM YYYY")}</Text>
+              <Text>Notes: {formData.notes}</Text>
+              <Text>
+                Status:{" "}
+                {formData.status === 1 ? (
+                  <Text as="span" color="red.500" fontWeight="bold">
+                    Not Paid Yet
+                  </Text>
+                ) : (
+                  <Text as="span" color="green.500" fontWeight="bold">
+                    Paid
+                  </Text>
+                )}
+              </Text> */}
+            </ModalBody>
+          </ModalContent>
+        </Modal>
 
         {/* <OrdersOverview
           title={"Standard Operating Procedure"}
