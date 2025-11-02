@@ -47,6 +47,8 @@ import {
   FaRegTrashAlt,
   FaTable,
   FaListAlt,
+  FaCarSide,
+  FaFileInvoiceDollar,
 } from "react-icons/fa";
 import moment from "moment";
 
@@ -387,6 +389,44 @@ function Bookings() {
       } catch (error) {
         console.error("Error submitting form:", error);
         alert(error.response?.data?.message || "Something went wrong");
+      }
+    }
+  };
+
+  const handlePrint = async (id, mode) => {
+    try {
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL +
+          `/booking/print?id=${id}&format=${mode}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          responseType: "blob",
+        }
+      );
+
+      const blob = new Blob([response.data], {
+        type:
+          mode === "invoice"
+            ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            : "application/pdf",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${
+        mode === "invoice" ? "invoice.xlsx" : "pickup-docs.pdf"
+      }`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+      // const closeButton = document.querySelector("#download_report .btn-close");
+      // if (closeButton) (closeButton as HTMLElement).click();
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        console.log("No Booking Found");
+      } else {
+        console.log("Error:", error);
       }
     }
   };
@@ -760,7 +800,29 @@ function Bookings() {
                               cursor="pointer"
                             />
                           </MenuButton>
-                          <MenuList minW="100px">
+                          <MenuList minW="110px">
+                            <MenuItem
+                              onClick={() => handlePrint(row.id, "pick-up")}
+                            >
+                              <Icon
+                                as={FaCarSide}
+                                color="blue.400"
+                                cursor="pointer"
+                                style={{ marginRight: "10%" }}
+                              />
+                              Pick Up
+                            </MenuItem>
+                            <MenuItem
+                              onClick={() => handlePrint(row.id, "invoice")}
+                            >
+                              <Icon
+                                as={FaFileInvoiceDollar}
+                                color="orange.400"
+                                cursor="pointer"
+                                style={{ marginRight: "10%" }}
+                              />
+                              Invoice
+                            </MenuItem>
                             <MenuItem
                               onClick={() => handleModal(row.id, "update")}
                             >
