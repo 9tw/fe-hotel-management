@@ -70,6 +70,8 @@ function Bookings() {
     "From",
     "To",
     "Night(s)",
+    "Price",
+    "Total",
     "Notes",
     "Status",
     "Created By",
@@ -101,6 +103,7 @@ function Bookings() {
   const [isToError, setIsToError] = useState(true);
   const [isRoomError, setIsRoomError] = useState(true);
   const [isStatusError, setIsStatusError] = useState(true);
+  const [isPriceError, setIsPriceError] = useState(true);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -181,6 +184,7 @@ function Bookings() {
         from: data.from,
         to: data.to,
         room_id: data.room_id,
+        price: data.price,
         notes: data.notes,
         status: data.status,
         created_by: data.created_by,
@@ -196,6 +200,7 @@ function Bookings() {
           to: null,
           room_id: null,
           notes: null,
+          price: null,
           status: null,
           created_by: null,
           updated_by: null,
@@ -284,6 +289,7 @@ function Bookings() {
       to: null,
       room_id: null,
       notes: null,
+      price: null,
       status: null,
       created_by: null,
       updated_by: null,
@@ -298,6 +304,7 @@ function Bookings() {
       !formData.from ||
       !formData.to ||
       !formData.room_id ||
+      !formData.price ||
       !formData.status
     ) {
       setIsNameError(!formData.name ? false : true);
@@ -306,6 +313,7 @@ function Bookings() {
       setIsToError(!formData.to ? false : true);
       setIsRoomError(!formData.room_id ? false : true);
       setIsStatusError(!formData.status ? false : true);
+      setIsPriceError(!formData.price ? false : true);
     } else {
       try {
         if (mode === "create") {
@@ -318,6 +326,7 @@ function Bookings() {
               to: formData.to,
               room_id: formData.room_id,
               notes: formData.notes,
+              price: formData.price,
               status: formData.status,
               created_by: user,
             },
@@ -340,6 +349,7 @@ function Bookings() {
               to: formData.to,
               room_id: formData.room_id,
               notes: formData.notes,
+              price: formData.price,
               status: formData.status,
               updated_by: user,
             },
@@ -363,7 +373,7 @@ function Bookings() {
             }
           );
           console.log("Server response:", response.data);
-          alert("Booking updated!");
+          alert("Booking deleted!");
         }
 
         setFormData({
@@ -375,6 +385,7 @@ function Bookings() {
           room_id: null,
           notes: null,
           status: null,
+          price: null,
           created_by: null,
           updated_by: null,
         });
@@ -384,6 +395,7 @@ function Bookings() {
         setIsToError(true);
         setIsRoomError(true);
         setIsStatusError(true);
+        setIsPriceError(true);
         onClose();
         fetchBookings(page);
       } catch (error) {
@@ -420,8 +432,6 @@ function Bookings() {
       }`;
       link.click();
       window.URL.revokeObjectURL(url);
-      // const closeButton = document.querySelector("#download_report .btn-close");
-      // if (closeButton) (closeButton as HTMLElement).click();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         console.log("No Booking Found");
@@ -742,6 +752,8 @@ function Bookings() {
                       <Td>{moment(row.from).format("MMM, DD YYYY")}</Td>
                       <Td>{moment(row.to).format("MMM, DD YYYY")}</Td>
                       <Td>{row.night}</Td>
+                      <Td>${row.price}</Td>
+                      <Td>${row.night * row.price}</Td>
                       <Td>
                         <Text whiteSpace="normal" wordBreak="break-word">
                           {row.notes}
@@ -897,6 +909,7 @@ function Bookings() {
                 From: {moment(formData.from).format("dddd, DD MMM YYYY")}
               </Text>
               <Text>To: {moment(formData.to).format("dddd, DD MMM YYYY")}</Text>
+              <Text>Price: ${formData.price}</Text>
               <Text>Notes: {formData.notes}</Text>
               <Text>
                 Status:{" "}
@@ -1033,7 +1046,7 @@ function Bookings() {
                     }
                   />
                   {!isGuestError ? (
-                    <Text color="red">Total Booking Guest(s) is Empty</Text>
+                    <Text color="red">Booking Guest(s) is Empty</Text>
                   ) : null}
                 </div>
                 <div style={{ marginBottom: 24 }}>
@@ -1102,6 +1115,25 @@ function Bookings() {
                   </Select>
                   {!isRoomError ? (
                     <Text color="red">Booking Room is Empty</Text>
+                  ) : null}
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    Price
+                  </FormLabel>
+                  <Input
+                    borderRadius="15px"
+                    fontSize="sm"
+                    type="float"
+                    placeholder="Enter number of price"
+                    size="lg"
+                    value={formData.price}
+                    onChange={(e) =>
+                      setFormData({ ...formData, price: e.target.value })
+                    }
+                  />
+                  {!isPriceError ? (
+                    <Text color="red">Price is Empty</Text>
                   ) : null}
                 </div>
                 <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
