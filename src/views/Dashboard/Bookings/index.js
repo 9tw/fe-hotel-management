@@ -762,9 +762,13 @@ function Bookings() {
                           <Text color="red.500" fontWeight="bold">
                             Not Paid Yet
                           </Text>
-                        ) : (
+                        ) : row.status === 2 ? (
                           <Text color="green.500" fontWeight="bold">
                             Paid
+                          </Text>
+                        ) : (
+                          <Text color="blue.500" fontWeight="bold">
+                            None
                           </Text>
                         )}
                       </Td>
