@@ -47,10 +47,13 @@ import {
   FaRegTrashAlt,
   FaTable,
   FaListAlt,
+  FaCarSide,
+  FaFileInvoiceDollar,
 } from "react-icons/fa";
 import moment from "moment";
 
 function Bookings() {
+  const user = localStorage.getItem("name");
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const textColor = useColorModeValue("gray.700", "white");
@@ -67,7 +70,12 @@ function Bookings() {
     "From",
     "To",
     "Night(s)",
+    "Price",
+    "Total",
     "Notes",
+    "Status",
+    "Created By",
+    "Updated By",
     "",
   ]);
   const [bookings, setBookings] = useState([]);
@@ -85,16 +93,17 @@ function Bookings() {
     to: null,
     room_id: null,
     notes: null,
-    room: {
-      id: null,
-      name: null,
-    },
+    status: null,
+    created_by: null,
+    updated_by: null,
   });
   const [isNameError, setIsNameError] = useState(true);
   const [isGuestError, setIsGuestError] = useState(true);
   const [isFromError, setIsFromError] = useState(true);
   const [isToError, setIsToError] = useState(true);
   const [isRoomError, setIsRoomError] = useState(true);
+  const [isStatusError, setIsStatusError] = useState(true);
+  const [isPriceError, setIsPriceError] = useState(true);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -175,11 +184,11 @@ function Bookings() {
         from: data.from,
         to: data.to,
         room_id: data.room_id,
+        price: data.price,
         notes: data.notes,
-        room: {
-          id: data.room.id,
-          name: data.room.name,
-        },
+        status: data.status,
+        created_by: data.created_by,
+        updated_by: data.updated_by,
       });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -191,10 +200,10 @@ function Bookings() {
           to: null,
           room_id: null,
           notes: null,
-          room: {
-            id: null,
-            name: null,
-          },
+          price: null,
+          status: null,
+          created_by: null,
+          updated_by: null,
         });
         console.log("No Booking Found");
       } else {
@@ -280,10 +289,10 @@ function Bookings() {
       to: null,
       room_id: null,
       notes: null,
-      room: {
-        id: null,
-        name: null,
-      },
+      price: null,
+      status: null,
+      created_by: null,
+      updated_by: null,
     });
     onClose();
   };
@@ -294,13 +303,17 @@ function Bookings() {
       !formData.guest ||
       !formData.from ||
       !formData.to ||
-      !formData.room_id
+      !formData.room_id ||
+      !formData.price ||
+      !formData.status
     ) {
       setIsNameError(!formData.name ? false : true);
       setIsGuestError(!formData.guest ? false : true);
       setIsFromError(!formData.from ? false : true);
       setIsToError(!formData.to ? false : true);
       setIsRoomError(!formData.room_id ? false : true);
+      setIsStatusError(!formData.status ? false : true);
+      setIsPriceError(!formData.price ? false : true);
     } else {
       try {
         if (mode === "create") {
@@ -313,6 +326,9 @@ function Bookings() {
               to: formData.to,
               room_id: formData.room_id,
               notes: formData.notes,
+              price: formData.price,
+              status: formData.status,
+              created_by: user,
             },
             {
               headers: {
@@ -333,6 +349,9 @@ function Bookings() {
               to: formData.to,
               room_id: formData.room_id,
               notes: formData.notes,
+              price: formData.price,
+              status: formData.status,
+              updated_by: user,
             },
             {
               headers: {
@@ -354,7 +373,7 @@ function Bookings() {
             }
           );
           console.log("Server response:", response.data);
-          alert("Booking updated!");
+          alert("Booking deleted!");
         }
 
         setFormData({
@@ -365,21 +384,59 @@ function Bookings() {
           to: null,
           room_id: null,
           notes: null,
-          room: {
-            id: null,
-            name: null,
-          },
+          status: null,
+          price: null,
+          created_by: null,
+          updated_by: null,
         });
         setIsNameError(true);
         setIsGuestError(true);
         setIsFromError(true);
         setIsToError(true);
         setIsRoomError(true);
+        setIsStatusError(true);
+        setIsPriceError(true);
         onClose();
         fetchBookings(page);
       } catch (error) {
         console.error("Error submitting form:", error);
         alert(error.response?.data?.message || "Something went wrong");
+      }
+    }
+  };
+
+  const handlePrint = async (id, mode) => {
+    try {
+      const response = await axios.get(
+        process.env.REACT_APP_API_URL +
+          `/booking/print?id=${id}&format=${mode}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          responseType: "blob",
+        }
+      );
+
+      const blob = new Blob([response.data], {
+        type:
+          mode === "invoice"
+            ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            : "application/pdf",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${
+        mode === "invoice" ? "invoice.xlsx" : "pickup-docs.pdf"
+      }`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        console.log("No Booking Found");
+      } else {
+        console.log("Error:", error);
       }
     }
   };
@@ -588,6 +645,7 @@ function Bookings() {
                                 onClick={() =>
                                   handleModal(item?.bookings[0]?.id, "detail")
                                 }
+                                cursor="pointer"
                               >
                                 <Tooltip
                                   label={item?.bookings[0]?.name}
@@ -692,11 +750,26 @@ function Bookings() {
                       <Td>{moment(row.from).format("MMM, DD YYYY")}</Td>
                       <Td>{moment(row.to).format("MMM, DD YYYY")}</Td>
                       <Td>{row.night}</Td>
+                      <Td>${row.price}</Td>
+                      <Td>${row.night * row.price}</Td>
                       <Td>
                         <Text whiteSpace="normal" wordBreak="break-word">
                           {row.notes}
                         </Text>
                       </Td>
+                      <Td>
+                        {row.status === 1 ? (
+                          <Text color="red.500" fontWeight="bold">
+                            Not Paid Yet
+                          </Text>
+                        ) : (
+                          <Text color="green.500" fontWeight="bold">
+                            Paid
+                          </Text>
+                        )}
+                      </Td>
+                      <Td>{row.created_by}</Td>
+                      <Td>{row.updated_by}</Td>
                       {/* <Td>
                               <Flex direction="column">
                                 <Text
@@ -737,7 +810,29 @@ function Bookings() {
                               cursor="pointer"
                             />
                           </MenuButton>
-                          <MenuList minW="100px">
+                          <MenuList minW="110px">
+                            <MenuItem
+                              onClick={() => handlePrint(row.id, "pick-up")}
+                            >
+                              <Icon
+                                as={FaCarSide}
+                                color="blue.400"
+                                cursor="pointer"
+                                style={{ marginRight: "10%" }}
+                              />
+                              Pick Up
+                            </MenuItem>
+                            <MenuItem
+                              onClick={() => handlePrint(row.id, "invoice")}
+                            >
+                              <Icon
+                                as={FaFileInvoiceDollar}
+                                color="orange.400"
+                                cursor="pointer"
+                                style={{ marginRight: "10%" }}
+                              />
+                              Invoice
+                            </MenuItem>
                             <MenuItem
                               onClick={() => handleModal(row.id, "update")}
                             >
@@ -798,7 +893,7 @@ function Bookings() {
               ? `Create`
               : mode === "update"
               ? `Update`
-              : mode === "update"
+              : mode === "delete"
               ? `Delete`
               : `Detail`}
           </ModalHeader>
@@ -812,7 +907,20 @@ function Bookings() {
                 From: {moment(formData.from).format("dddd, DD MMM YYYY")}
               </Text>
               <Text>To: {moment(formData.to).format("dddd, DD MMM YYYY")}</Text>
+              <Text>Price: ${formData.price}</Text>
               <Text>Notes: {formData.notes}</Text>
+              <Text>
+                Status:{" "}
+                {formData.status === 1 ? (
+                  <Text as="span" color="red.500" fontWeight="bold">
+                    Not Paid Yet
+                  </Text>
+                ) : (
+                  <Text as="span" color="green.500" fontWeight="bold">
+                    Paid
+                  </Text>
+                )}
+              </Text>
               <Button
                 onClick={() => setMode("update")}
                 fontSize="10px"
@@ -936,7 +1044,7 @@ function Bookings() {
                     }
                   />
                   {!isGuestError ? (
-                    <Text color="red">Total Booking Guest(s) is Empty</Text>
+                    <Text color="red">Booking Guest(s) is Empty</Text>
                   ) : null}
                 </div>
                 <div style={{ marginBottom: 24 }}>
@@ -1012,6 +1120,25 @@ function Bookings() {
                     <Text color="red">Booking Room is Empty</Text>
                   ) : null}
                 </div>
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    Price
+                  </FormLabel>
+                  <Input
+                    borderRadius="15px"
+                    fontSize="sm"
+                    type="float"
+                    placeholder="Enter number of price"
+                    size="lg"
+                    value={formData.price}
+                    onChange={(e) =>
+                      setFormData({ ...formData, price: e.target.value })
+                    }
+                  />
+                  {!isPriceError ? (
+                    <Text color="red">Price is Empty</Text>
+                  ) : null}
+                </div>
                 <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
                   Notes
                 </FormLabel>
@@ -1026,6 +1153,30 @@ function Bookings() {
                     setFormData({ ...formData, notes: e.target.value })
                   }
                 />
+                <div style={{ marginBottom: 24 }}>
+                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                    Status
+                  </FormLabel>
+                  <Select
+                    borderRadius="15px"
+                    fontSize="sm"
+                    placeholder="Select status"
+                    size="lg"
+                    value={formData.status}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        status: parseInt(e.target.value),
+                      })
+                    }
+                  >
+                    <option value="1">Not Paid Yet</option>
+                    <option value="2">Paid</option>
+                  </Select>
+                  {!isStatusError ? (
+                    <Text color="red">Status is Empty</Text>
+                  ) : null}
+                </div>
                 <Button
                   onClick={() => handleClose()}
                   fontSize="10px"
