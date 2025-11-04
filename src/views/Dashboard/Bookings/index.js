@@ -96,6 +96,10 @@ function Bookings() {
     status: null,
     created_by: null,
     updated_by: null,
+    room: {
+      id: null,
+      name: null,
+    },
   });
   const [isNameError, setIsNameError] = useState(true);
   const [isGuestError, setIsGuestError] = useState(true);
@@ -189,6 +193,10 @@ function Bookings() {
         status: data.status,
         created_by: data.created_by,
         updated_by: data.updated_by,
+        room: {
+          id: data.room.id,
+          name: data.room.name,
+        },
       });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -204,6 +212,10 @@ function Bookings() {
           status: null,
           created_by: null,
           updated_by: null,
+          room: {
+            id: null,
+            name: null,
+          },
         });
         console.log("No Booking Found");
       } else {
@@ -293,6 +305,10 @@ function Bookings() {
       status: null,
       created_by: null,
       updated_by: null,
+      room: {
+        id: null,
+        name: null,
+      },
     });
     onClose();
   };
@@ -388,6 +404,10 @@ function Bookings() {
           price: null,
           created_by: null,
           updated_by: null,
+          room: {
+            id: null,
+            name: null,
+          },
         });
         setIsNameError(true);
         setIsGuestError(true);
