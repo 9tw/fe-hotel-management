@@ -768,7 +768,7 @@ function Bookings() {
                           </Text>
                         ) : (
                           <Text color="blue.500" fontWeight="bold">
-                            No Information
+                            None
                           </Text>
                         )}
                       </Td>
