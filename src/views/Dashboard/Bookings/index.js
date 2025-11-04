@@ -744,9 +744,7 @@ function Bookings() {
                           </Text>
                         </Flex>
                       </Td> */}
-                      <Td my=".8rem" pl="0px">
-                        {row.room.name}
-                      </Td>
+                      <Td>{row.room?.name}</Td>
                       <Td>{row.name}</Td>
                       <Td>{row.guest}</Td>
                       <Td>{moment(row.from).format("MMM, DD YYYY")}</Td>
@@ -902,7 +900,7 @@ function Bookings() {
           <ModalCloseButton />
           {mode === "detail" ? (
             <ModalBody>
-              <Text>Room: {formData.room_id}</Text>
+              <Text>{formData.room?.name}</Text>
               <Text>Guest Name: {formData.name}</Text>
               <Text>Guest(s): {formData.guest}</Text>
               <Text>
@@ -1104,6 +1102,11 @@ function Bookings() {
                       })
                     }
                   >
+                    {mode === "update" ? (
+                      <option key={formData.room?.id} value={formData.room?.id}>
+                        {formData.room?.name}
+                      </option>
+                    ) : null}
                     {rooms.map((item) => (
                       <option key={item.id} value={item.id}>
                         {item.name}
