@@ -764,9 +764,13 @@ function Bookings() {
                           <Text color="red.500" fontWeight="bold">
                             Not Paid Yet
                           </Text>
-                        ) : (
+                        ) : row.status === 2 ? (
                           <Text color="green.500" fontWeight="bold">
                             Paid
+                          </Text>
+                        ) : (
+                          <Text color="blue.500" fontWeight="bold">
+                            No Information
                           </Text>
                         )}
                       </Td>
@@ -1104,6 +1108,11 @@ function Bookings() {
                       })
                     }
                   >
+                    {mode === "update" ? (
+                      <option key={formData.room?.id} value={formData.room?.id}>
+                        {formData.room?.name}
+                      </option>
+                    ) : null}
                     {rooms.map((item) => (
                       <option key={item.id} value={item.id}>
                         {item.name}
