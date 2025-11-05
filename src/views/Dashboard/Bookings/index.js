@@ -912,30 +912,6 @@ function Bookings() {
       <Modal isOpen={isOpen} onClose={() => handleClose()} isCentered>
         <ModalOverlay />
         <ModalContent>
-          {/* <ModalHeader>
-            {mode === "create" ? (
-              `Create`
-            ) : mode === "update" ? (
-              `Update`
-            ) : mode === "delete" ? (
-              `Delete`
-            ) : (
-              <Button
-                onClick={() => handlePrint(formData.id, "pick-up")}
-                variant="outline"
-                borderColor="blue.400"
-                color="blue.400"
-                w="10%"
-                h="25"
-                _hover={{
-                  bg: "blue.100",
-                }}
-              >
-                <Icon as={FaCarSide} color="blue.400" cursor="pointer" />
-              </Button>
-            )}
-          </ModalHeader> */}
-
           {mode === "create" ? (
             <ModalHeader>Create</ModalHeader>
           ) : mode === "update" ? (
