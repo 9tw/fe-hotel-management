@@ -197,7 +197,7 @@ export default function Dashboard() {
   const handleClose = () => {
     onClose();
   };
-    
+
   const fetchCheckOutTomorrow = async () => {
     try {
       const response = await axios.get(
@@ -369,8 +369,8 @@ export default function Dashboard() {
               </Tr>
             </Thead>
             <Tbody>
-              {checkOut.length != 0
-                ? checkOut.map((row) => {
+              {checkOut?.length != 0
+                ? checkOut?.map((row) => {
                     return (
                       <Tr>
                         <Td>{row?.room?.name}</Td>
@@ -429,8 +429,8 @@ export default function Dashboard() {
               </Tr>
             </Thead>
             <Tbody>
-              {checkIn.length != 0
-                ? checkIn.map((row) => {
+              {checkIn?.length != 0
+                ? checkIn?.map((row) => {
                     return (
                       <Tr>
                         <Td my=".8rem" pl="0px">
@@ -491,8 +491,8 @@ export default function Dashboard() {
               </Tr>
             </Thead>
             <Tbody>
-              {checkOutTomorrow.length != 0
-                ? checkOutTomorrow.map((row) => {
+              {checkOutTomorrow?.length != 0
+                ? checkOutTomorrow?.map((row) => {
                     return (
                       <Tr>
                         <Td>{row?.room?.name}</Td>
@@ -551,8 +551,8 @@ export default function Dashboard() {
               </Tr>
             </Thead>
             <Tbody>
-              {checkInTomorrow.length != 0
-                ? checkInTomorrow.map((row) => {
+              {checkInTomorrow?.length != 0
+                ? checkInTomorrow?.map((row) => {
                     return (
                       <Tr>
                         <Td my=".8rem" pl="0px">
