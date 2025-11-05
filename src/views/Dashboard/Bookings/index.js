@@ -912,15 +912,65 @@ function Bookings() {
       <Modal isOpen={isOpen} onClose={() => handleClose()} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
-            {mode === "create"
-              ? `Create`
-              : mode === "update"
-              ? `Update`
-              : mode === "delete"
-              ? `Delete`
-              : `Detail`}
-          </ModalHeader>
+          {mode === "create" ? (
+            <ModalHeader>Create</ModalHeader>
+          ) : mode === "update" ? (
+            <ModalHeader>Update</ModalHeader>
+          ) : mode === "delete" ? (
+            <ModalHeader>Delete</ModalHeader>
+          ) : (
+            <ModalHeader>
+              Detail
+              <Tooltip
+                label="Download pick up document"
+                placement="top"
+                hasArrow
+                bg="blue.400"
+                color="white"
+              >
+                <Button
+                  onClick={() => handlePrint(formData.id, "pick-up")}
+                  variant="outline"
+                  borderColor="blue.400"
+                  color="blue.400"
+                  w="10%"
+                  h="19"
+                  ml="2"
+                  _hover={{
+                    bg: "blue.100",
+                  }}
+                >
+                  <Icon as={FaCarSide} color="blue.400" cursor="pointer" />
+                </Button>
+              </Tooltip>
+              <Tooltip
+                label="Download invoice"
+                placement="top"
+                hasArrow
+                bg="green.400"
+                color="white"
+              >
+                <Button
+                  onClick={() => handlePrint(formData.id, "invoice")}
+                  variant="outline"
+                  borderColor="green.400"
+                  color="green.400"
+                  w="10%"
+                  h="19"
+                  ml="2"
+                  _hover={{
+                    bg: "green.100",
+                  }}
+                >
+                  <Icon
+                    as={FaFileInvoiceDollar}
+                    color="green.400"
+                    cursor="pointer"
+                  />
+                </Button>
+              </Tooltip>
+            </ModalHeader>
+          )}
           <ModalCloseButton />
           {mode === "detail" ? (
             <ModalBody>
@@ -939,9 +989,13 @@ function Bookings() {
                   <Text as="span" color="red.500" fontWeight="bold">
                     Not Paid Yet
                   </Text>
-                ) : (
+                ) : formData.status === 2 ? (
                   <Text as="span" color="green.500" fontWeight="bold">
                     Paid
+                  </Text>
+                ) : (
+                  <Text as="span" color="blue.500" fontWeight="bold">
+                    None
                   </Text>
                 )}
               </Text>
