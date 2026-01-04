@@ -315,13 +315,14 @@ function Bookings() {
 
   const handleSubmit = async (mode, bookingId) => {
     if (
-      !formData.name ||
-      !formData.guest ||
-      !formData.from ||
-      !formData.to ||
-      !formData.room_id ||
-      !formData.price ||
-      !formData.status
+      (!formData.name ||
+        !formData.guest ||
+        !formData.from ||
+        !formData.to ||
+        !formData.room_id ||
+        !formData.price ||
+        !formData.status) &&
+      mode !== "delete"
     ) {
       setIsNameError(!formData.name ? false : true);
       setIsGuestError(!formData.guest ? false : true);
